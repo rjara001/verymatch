@@ -1,0 +1,69 @@
+<ion-header>
+
+    <ion-navbar>
+        <ion-title>Ingreso</ion-title>
+    </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+    <div class="main">
+        <h3>Favor ingrese, o
+            <a href="#/registrar">Registrese</a>
+        </h3>
+        <div>
+
+            <ion-grid>
+                <ion-row>
+
+                    <ion-col width-50>
+                        <button (click)="login('facebook')" ion-button style="width:100%">
+                            <ion-icon name="logo-facebook"></ion-icon>&nbsp;Facebook</button>
+                    </ion-col>
+                    <ion-col width-50>
+                        <button (click)="login('google')" color="danger" ion-button style="width:100%">
+                            <ion-icon name="logo-google"></ion-icon>&nbsp;Google</button>
+                    </ion-col>
+                    <ion-item-divider ion-item light no-lines style="font-size: 1.4rem">
+                        <div text-center>
+                            or</div>
+                    </ion-item-divider>
+                        <ion-col width-100>
+                    <form role="form">
+                        <ion-item>
+                            <ion-label fixed>Email</ion-label>
+                            <ion-input type="text" [(ngModel)]="Info.IdUsuario" name="idusuario"></ion-input>
+                          
+                        </ion-item>
+                        <ion-item>
+                            <ion-label fixed>Contrase&ntilde;a</ion-label>
+                            <ion-input [(ngModel)]="Info.Contrasenia" type="password" name="contrasenia"></ion-input>
+                        </ion-item>
+                        <!--             
+                            <label class="item item-input item-stacked-label">
+                                <span class="input-label">Contrase&ntilde;a</span>
+                                <input type="password  ng-model=" info.contrasenia " autocapitalize="off ">
+                            </label>
+                            <label class="item item-input item-stacked-label ">
+                                <span class="input-label ">Contrase&ntilde;a</span>
+                                <input type="password " ng-model="info.contrasenia ">
+                            </label> -->
+                        <div>
+                            <button (click)="login('propio')" color="important" ion-button style="width:100%">
+                                <ion-icon name="logo-user"></ion-icon>&nbsp;Ingresar</button>
+
+                        </div>
+
+                    </form></ion-col>
+                </ion-row>
+            </ion-grid>
+            <!-- <div class="button-bar">
+                <a href="#" class="button button-positive ion-social-facebook icon-left" ng-click="facebook()">Facebook</a>
+
+                <a href="#" class="button button-assertive ion-social-google icon-left" ng-click="google()">Google</a>
+            </div> -->
+        </div>
+
+    </div>
+</ion-content>

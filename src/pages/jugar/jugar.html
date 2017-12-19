@@ -1,0 +1,66 @@
+<!--
+  Generated template for the JugarPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Jugar</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding="true" scroll="false" class="has-header">
+
+  <ion-list>
+    <ion-item class="item-divider">
+
+
+      <div class="row">
+        <div>Nivel : {{info.grupo}}</div>
+        <div class="top right5">
+          <span ng-show="info.NivelRepeticiones==0" class="badge badge-balanced">1&deg; Match Aprendidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</span>
+          <span ng-show="info.NivelRepeticiones==1" class="badge badge-energized">2&deg; Match Reconocidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</span>
+          <span ng-show="info.NivelRepeticiones==2" class="badge badge-assertive">3&deg; Match Conocidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</span>
+          <span ng-show="info.NivelRepeticiones==3" class="badge badge-dark">4&deg; Match Descubiertas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</span>
+        </div>
+        <div class="bottom right5" ng-show="info.NivelRepeticiones<3">
+          <span ng-show="info.NivelRepeticiones==0" class="badge badge-energized">Cola 2&deg; Match {{info.RepetidasColaNoConocidas}}</span>
+          <span ng-show="info.NivelRepeticiones==1" class="badge badge-assertive">Cola 3&deg; Match {{info.RepetidasColaNoConocidas}}</span>
+          <span ng-show="info.NivelRepeticiones==2" class="badge badge-dark">Cola 4&deg; Match {{info.RepetidasColaNoConocidas}}</span>
+        </div>
+      </div>
+    </ion-item>
+  </ion-list>
+  <form class="list">
+
+    <label class="item item-input">
+      <i class="icon placeholder-icon">
+        <img [src]="info.imgPalabra" />
+      </i>
+      <input type="text" placeholder="Palabra" ng-model="info.palabra" autocapitalize="off" readonly="readonly">
+
+    </label>
+
+    <div class="item item-input">
+      <i class="icon placeholder-icon">
+        <img [src]="info.imgSignificado" />
+      </i>
+      <input type="text" placeholder="Significado" ng-model="info.significado" id="txtSignificado" autocapitalize="off" ng-keypress="_limpiar($event)"
+      />
+      <i class="icon ion-edit padding-right assertive" ng-click="_revisar()" ng-show="info.puedeEditar"></i>
+      <i class="icon ion-checkmark-circled padding-right balanced" ng-show="info.mostrarValido"></i>
+      <i class="icon ion-bug padding-right assertive" ng-show="info.mostrarNoValido"></i>
+      <!--<div class="mensaje assertive padding-right" ng-show="info.mostrarMensaje">{{info.mensaje}}</div>-->
+    </div>
+    <div class="button-bar">
+      <button class="button button-stable button-block item-icon-left ion-android-done-all" ng-click="_validar()" ng-disabled="info.finalizado">Validar</button>
+      <button class="button button-stable button-block item-icon-left ion-eye" ng-click="_ver()" ng-disabled="info.finalizado">Ver</button>
+      <button class="button button-stable button-block item-icon-left ion-ios-fastforward" ng-click="_nuevo()" ng-disabled="info.finalizado">Siguiente</button>
+    </div>
+  </form>
+  <ion-list></ion-list>
+</ion-content>
