@@ -18,7 +18,7 @@ export class Config {
 
 	public propio ={
 		appId:"2"
-		,usuario:""
+		,email:""
 		,contraseña:""
 	}
 

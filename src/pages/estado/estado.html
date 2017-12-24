@@ -13,8 +13,103 @@
   </ion-navbar>
 </ion-header>
 
+<div class="bar bar-loading bar-assertive icon ion-ios-timer" ng-if="info.isLoading">
+  Procesando...
+</div>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label>Nivel</ion-label>
+      <ion-select [(ngModel)]="info.seleccion" (ngModelChange)="recargar(info.seleccion)">
+        <ion-option *ngFor="let grupo of info.grupos" [value]="grupo.Id">
+          {{grupo.Nombre}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Total Palabras</ion-label>
+
+      <ion-badge color="stable" item-end>{{info.resumen.Total}}</ion-badge>
+
+      <ion-checkbox [(ngModel)]="info.todos" (ngModelChange)="todos()"></ion-checkbox>
+
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Aprendidas</ion-label>
+      <i class="ion-star balanced" [hidden]="!info.resumen.NumeroRepeticionesActual==0"></i>
+      <ion-badge color="balanced" item-end>{{info.resumen.RepetidasConocidas[0]}}/{{info.resumen.RepetidasNoConocidas[0]}}</ion-badge>
+      <ion-checkbox [(ngModel)]="info.aprendidas"> </ion-checkbox>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Reconocidas</ion-label>
+      <i class="ion-star balanced" [hidden]="!info.resumen.NumeroRepeticionesActual==1"></i>
+      <ion-badge color="energized" item-end>{{info.resumen.RepetidasConocidas[1]}}/{{info.resumen.RepetidasNoConocidas[1]}}</ion-badge>
+
+      <ion-checkbox [(ngModel)]="info.reconocidas">
+      </ion-checkbox>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Conocidas</ion-label>
+      <i class="ion-star balanced" [hidden]="!info.resumen.NumeroRepeticionesActual==2"></i>
+      <ion-badge color="assertive" item-end>{{info.resumen.RepetidasConocidas[2]}}/{{info.resumen.RepetidasNoConocidas[2]}}</ion-badge>
+      <ion-checkbox [(ngModel)]="info.conocidas">
+      </ion-checkbox>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Descubiertas</ion-label>
+      <i class="ion-star balanced" [hidden]="!info.resumen.NumeroRepeticionesActual==3"></i>
+      <ion-badge color="badge-dark" item-end>{{info.resumen.RepetidasConocidas[3]}}/{{info.resumen.RepetidasNoConocidas[3]}}</ion-badge>
+      <ion-checkbox [(ngModel)]="info.descubiertas">
+      </ion-checkbox>
+    </ion-item>
+  </ion-list>
+
+  <ion-list-header>
+    Operaciones
+  </ion-list-header>
 
 
-<ion-content padding>
+  <ion-list>
+
+    <ion-item>
+      Redistribuir seleccionados
+      <button ion-button item-end outline icon-start (click)="mover()">
+        <ion-icon name='shuffle'></ion-icon>
+        Aplicar
+      </button>
+    </ion-item>
+
+    <ion-item>
+      Reiniciar valores
+      <button ion-button item-end outline icon-start (click)="reiniciar()">
+        <ion-icon name='refresh'></ion-icon>
+        Aplicar
+      </button>
+    </ion-item>
+    <ion-item>
+      Subir cambios pendientes
+      <ion-badge color="badge-royal" item-end>{{info.resumen.PendientesPorSubir}}</ion-badge>
+      <button ion-button item-end outline icon-start (click)="subir()">
+        <ion-icon name='md-cloud-upload'></ion-icon>
+        Aplicar
+
+      </button>
+    </ion-item>
+    <ion-item>
+      Bajar palabras desde servidor
+      <button ion-button item-end outline icon-start (click)="bajar()">
+        <ion-icon name='md-cloud-download'></ion-icon>
+        Aplicar
+
+      </button>
+    </ion-item>
+  </ion-list>
+
 
 </ion-content>

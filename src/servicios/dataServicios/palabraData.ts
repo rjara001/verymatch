@@ -1,17 +1,18 @@
 import { InfoPalabra } from "../../modelo/InfoPalabra";
 import { BaseDataService } from "./BaseDataService";
+import {InfoBase} from '../../modelo/InfoBase';
 
 export class palabraData extends BaseDataService {
 
-    TEXT_CREATE: string = "create table if not exists Palabra (Id integer, Nombre text, Significado text, Indice integer, EsConocido integer, Repeticiones integer, IdUsuario integer, IdGrupo integer, DebeActualizar integer)";
-    TEXT_INSERT: string = "insert into Palabra (Id, Nombre, Significado, Indice, EsConocido, Repeticiones, IdUsuario, IdGrupo, DebeActualizar) values (?,?,?,?,?,?,?,?,?)";
-    TEXT_UPDATE: string = "update Palabra set Nombre=?, Significado=?, Indice=?, EsConocido=?, Repeticiones=?, IdUsuario=?, IdGrupo=?, DebeActualizar=? where Id=?";
-    TEXT_TRAER_POR_ID: string = "select Id, Nombre, Significado, Indice, EsConocido, Repeticiones, IdUsuario, IdGrupo, DebeActualizar from Palabra where Id = ?";
-    TEXT_TRAER_TODOS: string = "select Id, Nombre, Significado, Indice, EsConocido, Repeticiones, IdUsuario, IdGrupo, DebeActualizar from Palabra where idGrupo = ? and IdUsuario = ?";
-    TEXT_ELIMINAR_TODO: string = "delete from Palabra where IdUsuario = ?";
-    TEXT_ELIMINAR_TODO_ID: string = "delete from Palabra where IdUsuario = ? and IdGrupo = ?";
-    TEXT_PENDIENTES: string = "select count(*) Cantidad from Palabra where IdUsuario = ? and DebeActualizar==1";
-    TEXT_DEBE_ACTUALIZAR: string = "select Id, Nombre, Significado, Indice, EsConocido, Repeticiones, IdUsuario, IdGrupo, DebeActualizar from Palabra where IdUsuario = ? and DebeActualizar = 1";
+    TEXT_CREATE: string = "create table if not exists Palabra (Id integer, Nombre text, Significado text, Indice integer, EsConocido integer, Repeticiones integer, CodigoUsuario integer, IdGrupo integer, DebeActualizar integer)";
+    TEXT_INSERT: string = "insert into Palabra (Id, Nombre, Significado, Indice, EsConocido, Repeticiones, CodigoUsuario, IdGrupo, DebeActualizar) values (?,?,?,?,?,?,?,?,?)";
+    TEXT_UPDATE: string = "update Palabra set Nombre=?, Significado=?, Indice=?, EsConocido=?, Repeticiones=?, CodigoUsuario=?, IdGrupo=?, DebeActualizar=? where Id=?";
+    TEXT_TRAER_POR_ID: string = "select Id, Nombre, Significado, Indice, EsConocido, Repeticiones, CodigoUsuario, IdGrupo, DebeActualizar from Palabra where Id = ?";
+    TEXT_TRAER_TODOS: string = "select Id, Nombre, Significado, Indice, EsConocido, Repeticiones, CodigoUsuario, IdGrupo, DebeActualizar from Palabra where idGrupo = ? and CodigoUsuario = ?";
+    TEXT_ELIMINAR_TODO: string = "delete from Palabra where CodigoUsuario = ?";
+    TEXT_ELIMINAR_TODO_ID: string = "delete from Palabra where CodigoUsuario = ? and IdGrupo = ?";
+    TEXT_PENDIENTES: string = "select count(*) Cantidad from Palabra where CodigoUsuario = ? and DebeActualizar==1";
+    TEXT_DEBE_ACTUALIZAR: string = "select Id, Nombre, Significado, Indice, EsConocido, Repeticiones, CodigoUsuario, IdGrupo, DebeActualizar from Palabra where CodigoUsuario = ? and DebeActualizar = 1";
 
     constructor() {
         super();
@@ -21,13 +22,13 @@ export class palabraData extends BaseDataService {
         this.EjecutarNoSQL(this.TEXT_CREATE);
     }
 
-    add(palabra: InfoPalabra) {
+    add(palabra: InfoPalabra):Promise<void> {
 
-        return this.EjecutarSQL(this.TEXT_INSERT, [palabra.Id, palabra.Nombre, palabra.Significado, palabra.Indice, palabra.EsConocido, palabra.Repeticiones, palabra.IdUsuario, palabra.IdGrupo, palabra.DebeActualizar]);
+        return this.EjecutarSQL(this.TEXT_INSERT, [palabra.Id, palabra.Nombre, palabra.Significado, palabra.Indice, Number(palabra.EsConocido), palabra.Repeticiones, palabra.getCodigoUsuario(), palabra.IdGrupo, palabra.DebeActualizar]);
     }
 
-    update(palabra: InfoPalabra) {
-        return this.EjecutarSQL(this.TEXT_UPDATE, [palabra.Nombre, palabra.Significado, palabra.Indice, palabra.EsConocido, palabra.Repeticiones, palabra.IdUsuario, palabra.IdGrupo, palabra.DebeActualizar, palabra.Id]);
+    update(palabra: InfoPalabra):Promise<void> {
+        return this.EjecutarSQL(this.TEXT_UPDATE, [palabra.Nombre, palabra.Significado, palabra.Indice, Number(palabra.EsConocido), palabra.Repeticiones, palabra.getCodigoUsuario(), palabra.IdGrupo, palabra.DebeActualizar, palabra.Id]);
     }
 
     findById(id: number):Promise<any> {
@@ -43,13 +44,13 @@ export class palabraData extends BaseDataService {
 
     }
 
-    getAll(idUsuario: string, idGrupo: number):Promise<InfoPalabra[]> {
+    getAll(codigoUsuario: number, idGrupo: number):Promise<InfoPalabra[]> {
 
-        return this.EjecutarSQL(this.TEXT_TRAER_TODOS, [idGrupo, idUsuario])
+        return this.EjecutarSQL(this.TEXT_TRAER_TODOS, [idGrupo, codigoUsuario])
             .then(response => {
                 let Palabraes = new Array<InfoPalabra>();
                 for (let index = 0; index < response.rows.length; index++) {
-                    var _Palabra = new InfoPalabra(idUsuario, idGrupo);
+                    var _Palabra = new InfoPalabra(codigoUsuario, idGrupo);
                     _Palabra.poblar(response.rows.item(index));
                     Palabraes.push(_Palabra);
                 }
@@ -65,34 +66,38 @@ export class palabraData extends BaseDataService {
             );
     }
 
-    eliminarTodo(idUsuario: string, idGrupo: number) {
-        this.EjecutarSQL(this.TEXT_ELIMINAR_TODO, [idUsuario, idGrupo]);
+    eliminarTodo(codigoUsuario: number, idGrupo: number) {
+        this.EjecutarSQL(this.TEXT_ELIMINAR_TODO, [codigoUsuario, idGrupo]);
     }
 
-    eliminarTodoPorGrupo(idUsuario: string, idGrupo: number) {
-        this.EjecutarSQL(this.TEXT_ELIMINAR_TODO_ID, [idUsuario, idGrupo]);
+    eliminarTodoPorGrupo(codigoUsuario: number, idGrupo: number) {
+        this.EjecutarSQL(this.TEXT_ELIMINAR_TODO_ID, [codigoUsuario, idGrupo]);
     }
 
-    getNumeroPendientes(idUsuario: string, callback: () => void) {
-        return this.EjecutarSQL(this.TEXT_PENDIENTES, [idUsuario])
+    getNumeroPendientes(codigoUsuario: number):Promise<number> {
+       return this.EjecutarSQL(this.TEXT_PENDIENTES, [codigoUsuario])
             .then(response => {
                 if (response.rows.length > 0) {
                     return Number(response.rows.item(0).Cantidad);
                 }
                 return 0;
             })
-            .catch(error => Promise.reject(error));
+            .catch(error =>{
+
+                 return Promise.reject(error);
+                });
 
     }
 
-    getDebeActualizar(idUsuario: string) {
-        return this.EjecutarSQL(this.TEXT_DEBE_ACTUALIZAR, [])
+    getDebeActualizar(codigoUsuario: number)     {
+        return this.EjecutarSQL(this.TEXT_DEBE_ACTUALIZAR, [codigoUsuario])
             .then(response => {
                 let Palabraes = [];
                 for (let index = 0; index < response.rows.length; index++) {
-                    var _Palabra = new InfoPalabra(idUsuario, -1);
-                    _Palabra.poblar(response.rows.item(index));
-                    Palabraes.push(_Palabra);
+                    var _palabra = new InfoPalabra(codigoUsuario, -1);
+                    _palabra.poblar(response.rows.item(index));
+                    _palabra.IdUsuario = codigoUsuario;
+                    Palabraes.push(_palabra);
                 }
                 return Promise.resolve(Palabraes);
             })

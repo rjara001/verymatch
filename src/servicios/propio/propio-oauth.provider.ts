@@ -15,11 +15,11 @@ interface ILoginResponse {
     access_token: string;
 }
 export class authUsuario {
-    tokenNotificacion: any;
+    tokenNotificacion: string;
     Olvido: boolean;
-    idapporigen: any;
-    Contrasenia: any;
-    idUsuario: any;
+    idapporigen: number;
+    Contrasenia: string;
+    IdUsuario: string;
 }
 
 @Injectable()
@@ -36,12 +36,24 @@ export class PropioOauthProvider implements IOathProvider {
       this.Register = Register;*/
 
     getProfile(accessToken: string): Promise<any> {
-        return Promise.resolve();
+        if (!Red.revisarConexionInternet())
+        return;
+
+        var _url = "[HOST]/api/usuariowrapper/BuscarPorEmail";
+
+        _url = _url.replace("[HOST]", Constantes.url);
+
+        var _postData = JSON.stringify(this.usuario);
+
+        return this.http.post(_url
+            , _postData
+            , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+            .toPromise();
     }
     
     login(config: Config): Promise<any> {
         this.usuario = new authUsuario();
-        this.usuario.idUsuario = config.propio.usuario;
+        this.usuario.IdUsuario = config.propio.email;
         this.usuario.Contrasenia = config.propio.contraseña;
         this.usuario.idapporigen = Constantes.idapporigen; // Identificador de multitenant de tipo verymatch
         this.usuario.Olvido = false;
@@ -73,35 +85,8 @@ export class PropioOauthProvider implements IOathProvider {
             , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
             .toPromise();
 
-        // var _url = "[HOST]/api/usuariowrapper/validar";
-
-        // _url = _url.replace("[HOST]", Constantes.url);
-
-        // var xmlhttp = new XMLHttpRequest();
-
-        // var _parametro = this.toParametro();
-
-        // xmlhttp.onreadystatechange = function () {
-        //     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        //         Promise.resolve(xmlhttp.responseText);
-        //     }
-        // }.bind(this);
-
-        // xmlhttp.open("POST", _url, true);
-        // xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-
-        // xmlhttp.send(_parametro);
     }
 
-    toParametro(): string {
-
-        return "idusuario=" + this.usuario.idUsuario
-            + "&contrasenia=" + this.usuario.Contrasenia
-            + "&idapporigen=" + this.usuario.idapporigen
-            + "&tokenNotificacion=" + this.usuario.tokenNotificacion
-            + "&olvido=" + this.usuario.Olvido;
-
-    }
     Register(usuario, callback) {
 
         //var response;
@@ -132,7 +117,7 @@ export class PropioOauthProvider implements IOathProvider {
 
         var xmlhttp = new XMLHttpRequest();
 
-        var _parametro = this.toParametro();
+        var _parametro = null;//this.toParametro();
 
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -146,15 +131,15 @@ export class PropioOauthProvider implements IOathProvider {
         xmlhttp.send(_parametro);
     }
 
-    SetCredentials(username: string, password: string, callback) {
-        var authdata = Base64.encode(username + ':' + password);
+    SetCredentials(codigoUsuario: number, password: string, callback) {
+        var authdata = Base64.encode(String(codigoUsuario) + ':' + password);
 
 
-        this.usuario.idUsuario = username;
+//        this.usuario.Email = username;
 
         //  Register(usuario, callback);//  No recuerdo cual era la necesidad de esta linea (Register).
 
-        globalDataService.setIdUsuario(username);
+        globalDataService.setCodigoUsuario(codigoUsuario);
         // this.globalData.setData(new Par("idUsuario", username));
         // this.globalData.setData(new Par("authdata", authdata));
 
@@ -166,7 +151,7 @@ export class PropioOauthProvider implements IOathProvider {
     }
 
     ClearCredentials() {
-        globalDataService.setIdUsuario("");
+        globalDataService.setCodigoUsuario(-1);
         //$http.defaults.headers.common.Authorization = 'Basic ';
     }
 }

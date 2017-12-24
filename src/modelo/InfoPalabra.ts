@@ -1,4 +1,5 @@
 import {InfoBase} from '../modelo/InfoBase';
+import { InfoResumen } from './InfoResumen';
 
 export class InfoPalabra extends InfoBase{
     CantidadMatch: any;
@@ -10,14 +11,16 @@ export class InfoPalabra extends InfoBase{
     Indice:number;
     EsConocido:boolean;
     Repeticiones :number;
-    IdUsuario:string;
     IdGrupo : number;
-    DebeActualizar:boolean;
+    DebeActualizar:number;
+    Resumen: InfoResumen;
+    IdUsuario:number;
     
-    constructor(idUsuario:string, idGrupo:number){
+    constructor(codigoUsuario:number, idGrupo:number){
         super();
         this.IdGrupo = idGrupo;
-        this.IdUsuario = idUsuario;
+        this.setCodigoUsuario(codigoUsuario);
+        this.Repeticiones = 0;
     }
 
     poblar(item: InfoPalabra) {
@@ -26,7 +29,13 @@ export class InfoPalabra extends InfoBase{
         this.EstadoGrupo = item.EstadoGrupo;
         this.NumeroMatch = item.NumeroMatch;
         this.CantidadMatch = item.CantidadMatch;
-        this.IdUsuario = item.IdUsuario;
+        this.Significado = item.Significado;
+        this.DebeActualizar = item.DebeActualizar;
+        this.EsConocido = Boolean(item.EsConocido);
+        this.IdGrupo = item.IdGrupo;
+        this.Indice = item.Indice;
+        this.Repeticiones = item.Repeticiones;
+
     }
 
 }

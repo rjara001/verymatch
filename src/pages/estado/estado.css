@@ -1,0 +1,7 @@
+page-estado ion-list:first-child {
+  margin-top: 32px;
+}
+
+page-estado ion-list + ion-list {
+  margin-top: 0;
+}

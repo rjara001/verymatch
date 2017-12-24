@@ -14,5 +14,25 @@
 </ion-header>
 
 <ion-content padding>
-
+  <ion-list>
+    <ion-item>
+      <ion-avatar item-start>
+        <img src="assets/imgs/blue-user-icon2.png">
+      </ion-avatar>
+      <h2>Usuario:</h2>
+      <h3>{{info.usuario}}</h3>
+    </ion-item>
+    <ion-item>
+      Version:{{info.version}}
+    </ion-item>
+    <ion-item>
+      Pagina:{{info.host}}
+    </ion-item>
+    <ion-item>
+      Soporte:{{info.emailSoporte}}
+    </ion-item>
+    <ion-item>
+      <button ion-button color="secondary" (click)="cerrar()">Cerrar Sesión</button>
+    </ion-item>
+  </ion-list>
 </ion-content>

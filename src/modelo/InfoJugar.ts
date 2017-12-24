@@ -1,5 +1,6 @@
 import {InfoBase} from '../modelo/InfoBase';
 import { InfoGrupo } from './InfoGrupo';
+import { InfoResumen } from './InfoResumen';
 
 export class InfoJugar extends InfoBase {
     puedeEditar:boolean = false;
@@ -8,7 +9,7 @@ export class InfoJugar extends InfoBase {
     ValidarSiempreActivo: boolean;
     imgPalabra: string;
     imgSignificado:string;
-    resumen:Resumen;
+    resumen:InfoResumen;
     NivelRepeticiones: any;
     RepetidasConocidas:number;
     RepetidasNoConocidas:number;
@@ -16,20 +17,21 @@ export class InfoJugar extends InfoBase {
     RepetidasColaNoConocidas:number;
     NombrePalabra:string;
     SignificadoPalabra:string;
+    mostrarValido:boolean;
+    mostrarNoValido:boolean;
+
 }
 
 export class InfoEstadoPage{
     grupoInicial:InfoGrupo;
     grupos:Array<InfoGrupo>;
-    resumen:any;
+    resumen:InfoResumen;
     seleccion:number;
+    
+    aprendidas:boolean;
+    reconocidas:boolean;
+    conocidas:boolean;
+    descubiertas:boolean;
+    todos:boolean;
 }
 
-export class Resumen{
-    Total:number = 0;
-    NumeroRepeticionesActual:number = 0;
-    TotalAprendidas:number = 0;
-    RepetidasConocidas = [0, 0, 0, 0, 0];
-    RepetidasNoConocidas = [0, 0, 0, 0, 0];
-    IdUsuario:string;// = $rootScope.globals.currentUser.username
-}

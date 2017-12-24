@@ -2,37 +2,44 @@ import { InfoGrupo } from '../modelo/InfoGrupo';
 import { InfoPalabra } from '../modelo/InfoPalabra';
 import { LoadingController, Loading, AlertController } from 'ionic-angular';
 import { globalDataService } from '../servicios/globalDataService';
+import { ToastController } from 'ionic-angular';
 
-export class InfoBase{
+export class InfoBase {
     Grupo: InfoGrupo;
-    globalData:globalDataService;
+    globalData: globalDataService;
 
-    getIdUsuario():string{
-        return globalDataService.getIdUsuario();
+    public getCodigoUsuario(): number {
+        return globalDataService.getCodigoUsuario();
     }
+
+    public setCodigoUsuario(codigo:number){
+        globalDataService.setCodigoUsuario(codigo);
+    }
+
 
 }
 
 export class PageBase {
     loading: Loading;
-   
+
     constructor(public alertCtrl: AlertController
-        , public loadingCtrl:LoadingController) {
+        , public loadingCtrl: LoadingController
+        , public toastCtrl: ToastController) {
 
     }
     hide() {
         this.loading.dismiss();
     }
 
-    showAlert(titulo:string, mensaje:string){
+    showAlert(titulo: string, mensaje: string) {
 
-            let alert = this.alertCtrl.create({
-              title: titulo,
-              subTitle: mensaje,
-              buttons: ['OK']
-            });
-            alert.present();
-          
+        let alert = this.alertCtrl.create({
+            title: titulo,
+            subTitle: mensaje,
+            buttons: ['OK']
+        });
+        alert.present();
+
     }
     show() {
 
@@ -47,25 +54,55 @@ export class PageBase {
         this.loading.present();
     }
 
-    public getIdUsuario():string{
+    public getCodigoUsuario(): number {
 
-            return globalDataService.getIdUsuario();
+        return globalDataService.getCodigoUsuario();
     }
 
-    public getIdGrupo():number{
-            return globalDataService.getIdGrupo();
+    public getEmailUsuario(): string {
+        
+                return globalDataService.getEmailUsuario();
+            }
+    public getIdGrupo(): number {
+        return globalDataService.getIdGrupo();
     }
 
-    // setIdGrupo(idgrupo:number){
-    //         window.localStorage.setItem(window.localStorage.getItem(globalDataService.getData("idUsuario") + ":idGrupo")
-    //                             , String(this.getIdGrupo()));
+    public mensaje(texto) {
+        let toast = this.toastCtrl.create({
+            message: texto,
+            duration: 3000,
+            position:'top'
+          });
+          toast.present();
 
-    //         globalDataService.setData(new Par("idgrupo", idgrupo));
-    // }
+    }
 
-    // setIdUsuario(idusuario:string){
+    public alerta(titulo, mensaje) {
+        let alert = this.alertCtrl.create({
+            title: titulo,
+            subTitle: mensaje
+        });
+        alert.present();
+    }
 
-    //         globalDataService.setData(new Par("idusuario", idusuario));
-    // }
+    public confirmar(titulo, mensaje) {
+        return new Promise<any>((resolve, reject) => {
+            let confirm = this.alertCtrl.create({
+                title: titulo,
+                message: mensaje,
+                buttons: [
+                    {
+                        text: 'Aceptar',
+                        handler: resolve
+                    },
+                    {
+                        text: 'Declinar',
+                        handler: reject
+                    }
+                ]
+            });
+            confirm.present();
+        });
 
+    }
 }

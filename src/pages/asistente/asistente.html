@@ -13,7 +13,73 @@
   </ion-navbar>
 </ion-header>
 
+<ion-content>
+  <ion-item-group>
+    <ion-item-divider color="light">
+      <h2>Nivel : {{info.grupo}}</h2>
+      <ion-note item-end style="top:-5px">
+        <ion-badge [hidden]="info.NivelRepeticiones!=0" color="balanced">1&deg; Match Aprendidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones!=1" color="energized">2&deg; Match Reconocidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones!=2" color="assertive">3&deg; Match Conocidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones!=3" color="dark">4&deg; Match Descubiertas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</ion-badge>
+      </ion-note>
+      <ion-note item-end>
+        <ion-badge [hidden]="info.NivelRepeticiones>=3 || info.NivelRepeticiones!=0" color="energized">Cola 2&deg; Match {{info.RepetidasColaNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones>=3 || info.NivelRepeticiones!=1" color="assertive">Cola 3&deg; Match {{info.RepetidasColaNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones>=3 || info.NivelRepeticiones!=2" color="dark">Cola 4&deg; Match {{info.RepetidasColaNoConocidas}}</ion-badge>
 
-<ion-content padding>
+      </ion-note>
+    </ion-item-divider>
+    <ion-item>
 
+
+      <ion-label stacked>
+        <img [src]="info.imgPalabra" />
+      </ion-label>
+      <ion-input type="text" [(ngModel)]="info.NombrePalabra"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked><img [src]="info.imgSignificado" /></ion-label>
+      <ion-input aria-placeholder="Significado" id="txtSignificado" type="text" [(ngModel)]="info.SignificadoPalabra"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked><img [src]="info.imgHablado" /></ion-label>
+      <ion-input aria-placeholder="Lo hablado" type="text" [(ngModel)]="info.lohablado"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <button ion-button icon-left block (click)="_repasar()" [disabled]="info._deseeSeguirJugando">
+              <ion-icon name="md-checkbox"></ion-icon>
+              {{info.botones.nombreRepasar}}
+            </button>
+          </ion-col>
+          <ion-col>
+            <button ion-button icon-center block (click)="_jugar()" [disabled]="info._deseeSeguirJugando">
+              <ion-icon name="md-eye"></ion-icon>
+              {{info.botones.nombreJugar}}
+            </button>
+          </ion-col>
+          <ion-col>
+            <button ion-button icon-right block (click)="_detener()">
+              <ion-icon name="md-fastforward"></ion-icon>
+              Detener
+            </button>
+          </ion-col>
+        </ion-row>
+
+      </ion-grid>
+
+      <!-- Float the icon right -->
+
+      <!-- Float the icon right -->
+
+
+
+    </ion-item>
+
+  </ion-item-group>
 </ion-content>

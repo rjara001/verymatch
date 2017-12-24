@@ -13,54 +13,80 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding="true" scroll="false" class="has-header">
+<ion-content>
+  <ion-item-group>
+    <ion-item-divider color="light">
+      <h2>Nivel : {{info.grupo}}</h2>
+      <ion-note item-end style="top:-5px">
+        <ion-badge [hidden]="info.NivelRepeticiones!=0" color="balanced">1&deg; Match Aprendidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones!=1" color="energized">2&deg; Match Reconocidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones!=2" color="assertive">3&deg; Match Conocidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones!=3" color="dark">4&deg; Match Descubiertas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</ion-badge>
+      </ion-note>
+      <ion-note item-end>
+        <ion-badge [hidden]="info.NivelRepeticiones>=3 || info.NivelRepeticiones!=0" color="energized">Cola 2&deg; Match {{info.RepetidasColaNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones>=3 || info.NivelRepeticiones!=1" color="assertive">Cola 3&deg; Match {{info.RepetidasColaNoConocidas}}</ion-badge>
+        <ion-badge [hidden]="info.NivelRepeticiones>=3 || info.NivelRepeticiones!=2" color="dark">Cola 4&deg; Match {{info.RepetidasColaNoConocidas}}</ion-badge>
 
-  <ion-list>
-    <ion-item class="item-divider">
+      </ion-note>
+    </ion-item-divider>
+    <ion-item>
 
 
-      <div class="row">
-        <div>Nivel : {{info.grupo}}</div>
-        <div class="top right5">
-          <span ng-show="info.NivelRepeticiones==0" class="badge badge-balanced">1&deg; Match Aprendidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</span>
-          <span ng-show="info.NivelRepeticiones==1" class="badge badge-energized">2&deg; Match Reconocidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</span>
-          <span ng-show="info.NivelRepeticiones==2" class="badge badge-assertive">3&deg; Match Conocidas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</span>
-          <span ng-show="info.NivelRepeticiones==3" class="badge badge-dark">4&deg; Match Descubiertas {{info.RepetidasConocidas}}/{{info.RepetidasNoConocidas}}</span>
-        </div>
-        <div class="bottom right5" ng-show="info.NivelRepeticiones<3">
-          <span ng-show="info.NivelRepeticiones==0" class="badge badge-energized">Cola 2&deg; Match {{info.RepetidasColaNoConocidas}}</span>
-          <span ng-show="info.NivelRepeticiones==1" class="badge badge-assertive">Cola 3&deg; Match {{info.RepetidasColaNoConocidas}}</span>
-          <span ng-show="info.NivelRepeticiones==2" class="badge badge-dark">Cola 4&deg; Match {{info.RepetidasColaNoConocidas}}</span>
-        </div>
-      </div>
-    </ion-item>
-  </ion-list>
-  <form class="list">
-
-    <label class="item item-input">
-      <i class="icon placeholder-icon">
+      <ion-label stacked>
         <img [src]="info.imgPalabra" />
-      </i>
-      <input type="text" placeholder="Palabra" ng-model="info.palabra" autocapitalize="off" readonly="readonly">
+      </ion-label>
+      <ion-input type="text" [(ngModel)]="info.NombrePalabra"></ion-input>
+    </ion-item>
 
-    </label>
-
-    <div class="item item-input">
-      <i class="icon placeholder-icon">
+    <ion-item>
+      <ion-label stacked>
         <img [src]="info.imgSignificado" />
-      </i>
-      <input type="text" placeholder="Significado" ng-model="info.significado" id="txtSignificado" autocapitalize="off" ng-keypress="_limpiar($event)"
-      />
-      <i class="icon ion-edit padding-right assertive" ng-click="_revisar()" ng-show="info.puedeEditar"></i>
-      <i class="icon ion-checkmark-circled padding-right balanced" ng-show="info.mostrarValido"></i>
-      <i class="icon ion-bug padding-right assertive" ng-show="info.mostrarNoValido"></i>
+      </ion-label>
+      <ion-icon item-end name="md-create" color="assertive" (click)="_revisar()" [hidden]="!info.puedeEditar"></ion-icon>
+      <ion-icon item-end name="md-checkmark-circle" color="balanced" [hidden]="!info.mostrarValido"></ion-icon>
+      <ion-icon item-end color="assertive" name="bug" [hidden]="!info.mostrarNoValido"></ion-icon>
+
+      <ion-input ng-keypress="_limpiar($event)" id="txtSignificado" type="text" [(ngModel)]="info.SignificadoPalabra"></ion-input>
+      
+
       <!--<div class="mensaje assertive padding-right" ng-show="info.mostrarMensaje">{{info.mensaje}}</div>-->
-    </div>
-    <div class="button-bar">
-      <button class="button button-stable button-block item-icon-left ion-android-done-all" ng-click="_validar()" ng-disabled="info.finalizado">Validar</button>
-      <button class="button button-stable button-block item-icon-left ion-eye" ng-click="_ver()" ng-disabled="info.finalizado">Ver</button>
-      <button class="button button-stable button-block item-icon-left ion-ios-fastforward" ng-click="_nuevo()" ng-disabled="info.finalizado">Siguiente</button>
-    </div>
-  </form>
-  <ion-list></ion-list>
+      <!-- Float the icon left -->
+    </ion-item>
+    <ion-item>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <button ion-button icon-left block (click)="_validar()" [disabled]="info.finalizado">
+              <ion-icon name="md-checkbox"></ion-icon>
+              Validar
+            </button>
+          </ion-col>
+          <ion-col>
+            <button ion-button icon-center block (click)="_ver()" [disabled]="info.finalizado">
+              <ion-icon name="md-eye"></ion-icon>
+              Ver
+            </button>
+          </ion-col>
+          <ion-col>
+            <button ion-button icon-right block (click)="_nuevo()" [disabled]="info.finalizado">
+              <ion-icon name="md-fastforward"></ion-icon>
+              Siguiente
+            </button>
+          </ion-col>
+        </ion-row>
+
+      </ion-grid>
+
+      <!-- Float the icon right -->
+
+      <!-- Float the icon right -->
+
+
+
+    </ion-item>
+
+  </ion-item-group>
+
+
 </ion-content>

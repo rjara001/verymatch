@@ -2,13 +2,23 @@ import { InfoPalabra } from "./InfoPalabra";
     
 
 export class InfoGrupo {
-    Id: any;
+    Id: number;
     Nombre: string;
     EstadoGrupo: any;
     NumeroMatch: any;
     CantidadMatch: any;
-    IdUsuario: any;
+    CodigoUsuario: number;
     Palabras: InfoPalabra[];
+
+
+    public constructor(item?: InfoGrupo){
+        this.Id = -1;
+        this.Nombre = "";
+        
+        if (item)
+            this.poblar(item);
+        
+    }
 
     poblar(info: InfoGrupo): void {
         
@@ -17,7 +27,7 @@ export class InfoGrupo {
             this.EstadoGrupo = info.EstadoGrupo;
             this.NumeroMatch = info.NumeroMatch;
             this.CantidadMatch = info.CantidadMatch;
-            this.IdUsuario = info.IdUsuario;
+            //this.CodigoUsuario = info.CodigoUsuario;
         
     }
 }

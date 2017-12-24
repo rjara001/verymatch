@@ -13,58 +13,67 @@ export class ConfiguracionService {
     constructor() {
         this._configuracion = new configuracionData();
     }
-    getAll(idUsuario, callback) {
-        return this._configuracion.getAll(idUsuario, callback);
+    getAll(codigoUsuario):Promise<InfoConfiguracion[]> {
+        return this._configuracion.getAll(codigoUsuario);
     }
 
-    getDebeActualizar(idUsuario, callback) {
-        return new palabraData().getDebeActualizar(idUsuario);
+    getDebeActualizar(codigoUsuario, callback) {
+        return new palabraData().getDebeActualizar(codigoUsuario);
     }
 
-    add(configuracion, callback) {
+    add(configuracion): Promise<void> {
 
-        let _id = this._configuracion.findById(configuracion.Id, callback);
+        return this._configuracion.findById(configuracion.Id).then(_ => {
 
-        if (_id == undefined)
-            this._configuracion.add(configuracion);
-        else
-            this._configuracion.update(configuracion);
+            if (_ == undefined)
+                return this._configuracion.add(configuracion);
+            else
+                return this._configuracion.update(configuracion);
+        });
 
     }
 
-    getById(id, callback) {
+    getById(id): Promise<InfoConfiguracion> {
         //verydb.db.getInstance().grupos.firstOrDefault(callback, "idGrupo='" + idGrupo + "'");
-        return this._configuracion.findById(id, callback);
+        return this._configuracion.findById(id);
 
     }
 
-    setOption(idUsuario, position, value, callback) {
+    setOption(codigoUsuario, position, value): Promise<void> {
 
-        let _ary = this.getAll(idUsuario, callback)
-        let info: InfoConfiguracion;
+        return this.getAll(codigoUsuario).then(_ary => {
 
-        if (_ary.length == 0)
-            info = new InfoConfiguracion(idUsuario);
-        else
-            info = _ary[0];
+            let info: InfoConfiguracion;
 
-        info.Opciones = info.Opciones.replaceAt(position, (value) ? "1" : "0");
+            if (_ary.length == 0)
+                info = new InfoConfiguracion(codigoUsuario);
+            else
+                info = _ary[0];
 
-        this.add(info, callback);
+            info.Opciones = this.setCharAt(info.Opciones, position, (value) ? "1" : "0");
+
+            return this.add(info);
+        });
 
     }
+    setCharAt(str,index,chr) {
+        if(index > str.length-1) return str;
+        return str.substr(0,index) + chr + str.substr(index+1);
+    }
 
-    getOption(idUsuario, position, callback) {
+    getOption(codigoUsuario, position):Promise<boolean> {
         //verydb.db.getInstance().grupos.firstOrDefault(callback, "idGrupo='" + idGrupo + "'");
-        let _ary = this.getAll(idUsuario, callback)
-        let info: InfoConfiguracion;
-
-        if (_ary.length > 0)
-            if (_ary[0].Opciones.length > position)
-                return parseInt(_ary[0].Opciones[position]) > 0 ? true : false;
-
-        return false;
-
+        return this.getAll(codigoUsuario).then(_ary=>{
+            let info: InfoConfiguracion;
+            
+                    if (_ary.length > 0)
+                        if (_ary[0].Opciones.length > position)
+                            return parseInt(_ary[0].Opciones[position]) > 0 ? true : false;
+            
+                    return false;
+            
+            
+        });
     }
 
     crearTabla(callback) {

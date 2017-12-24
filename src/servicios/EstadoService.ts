@@ -3,43 +3,38 @@ import { PalabraService } from "./PalabraService";
 import { BaseService } from "./BaseService";
 import { InfoGrupo } from "../modelo/InfoGrupo";
 import { InfoPalabra } from "../modelo/InfoPalabra";
+import { Inject, Injectable, NgModule } from "@angular/core";
+import { PalabraAccionService } from "./PalabraAccionService";
 
+@Injectable()
 export class EstadoService extends BaseService {
-    IdGrupo: number;
-    
-    servicioGrupo: GrupoService;
-    servicioPalabra: PalabraService;
 
-    constructor(idUsuario:string, idGrupo:number){
-        super(idUsuario)
-        this.IdGrupo = idGrupo;
-        this.servicioGrupo = new GrupoService(idUsuario)
-        this.servicioPalabra = new PalabraService(idUsuario, idGrupo);
+    constructor(public servicioGrupo:GrupoService, public servicioPalabra:PalabraService, public accionPalabra:PalabraAccionService){
+        super()
+             
     }
 
-    cargar(): Promise<InfoPalabra[]> {
+    iniciar(codigoUsuario:number){
+        this.servicioGrupo.CodigoUsuario = codigoUsuario;
+        this.servicioPalabra.iniciar(codigoUsuario, this.servicioGrupo.Info.Id);
+    }
+
+    cargar(): Promise<boolean> {
         
         if (this.servicioGrupo.Items.length > 0)
-            return this.servicioPalabra.cargar();
+            return this.servicioPalabra.cargar(this.servicioGrupo.Info.Id);
         else {
-            return this.servicioGrupo.cargar().then(_ => {
-                if (this.IdGrupo<0)
-                    return this.cargarGrupoPorDefecto();
+            return this.servicioGrupo.cargar().then(() => {
+                if (this.servicioGrupo.Info.Id<=0)
+                {
+                    this.servicioPalabra.getInfo().IdGrupo = this.servicioGrupo.getIdGrupoPorDefecto().Id;
+                    return this.servicioPalabra.cargar(this.servicioGrupo.Info.Id);
+                }
                 else
-                   return this.servicioPalabra.cargar();
+                   return this.servicioPalabra.cargar(this.servicioGrupo.Info.Id);
             });
         }
     }
-
-    cargarGrupoPorDefecto():Promise<InfoPalabra[]> {
-        
-
-            this.servicioPalabra.getInfo().IdGrupo = this.servicioGrupo.getIdGrupoPorDefecto().Id;
-
-            return this.servicioPalabra.cargar();
-
-    }
-
 
     buscarGrupoPorId(id): InfoGrupo {
         let _grupos: Array<InfoGrupo> = this.servicioGrupo.Items;

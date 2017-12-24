@@ -13,7 +13,13 @@
   </ion-navbar>
 </ion-header>
 
+<ion-content>
+    <ion-item-group>
+      <ion-item-divider color="light">General</ion-item-divider>
+      <ion-item>
+          <ion-label>{{info.TextoOrdenJuego}}</ion-label>
+          <ion-toggle checked="false" [(ngModel)]="info.InvertirOrdenJuego" (ionChange)="guardar(item)"></ion-toggle>
+      </ion-item>
 
-<ion-content padding>
-
-</ion-content>
+    </ion-item-group>
+  </ion-content>

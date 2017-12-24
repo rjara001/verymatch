@@ -1,28 +1,38 @@
 export class globalDataService {
-  private static _idUsuario:string;
+  private static _codigoUsuario:number = -1;
+  private static _email:string;
   private static _idGrupo:number = -1;
 
-  public static getIdUsuario():string{
+  public static getCodigoUsuario():number{
     let _usuario = window.localStorage.getItem("usuario");
-    this._idUsuario = _usuario;
+    this._codigoUsuario = Number(_usuario);
 
-    return this._idUsuario;
+    return this._codigoUsuario;
   }
 
-  public static setIdUsuario(idUsuario:string){
-    this._idUsuario = idUsuario;
-    window.localStorage.setItem("usuario",idUsuario);
+  public static setCodigoUsuario(codigoUsuario:number){
+    this._codigoUsuario = codigoUsuario;
+    window.localStorage.setItem("usuario",String(codigoUsuario));
+  }
+
+  public static setEmailUsuario(email:string){
+    this._email = email;
+    window.localStorage.setItem("email",String(email));
+  }
+
+  public static getEmailUsuario():string{
+    return this._email;
   }
 
   public static getIdGrupo():number{
-    let _grupo = Number(window.localStorage.getItem(this.getIdUsuario() + ":idGrupo"));
+    let _grupo = Number(window.localStorage.getItem(this.getCodigoUsuario() + ":idGrupo"));
     this._idGrupo = _grupo;
     return this._idGrupo;
   }
 
   public static setIdGrupo(idGrupo:number){
     this._idGrupo = idGrupo;
-    window.localStorage.setItem(this.getIdUsuario() + ":idGrupo",String(idGrupo));
+    window.localStorage.setItem(this.getCodigoUsuario() + ":idGrupo",String(idGrupo));
   }
   // dataChangeObserver: any;
   // static dataPar: Array<Par> = new Array<Par>();

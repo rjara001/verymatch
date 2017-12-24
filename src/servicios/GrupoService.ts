@@ -3,8 +3,12 @@ import { InfoGrupo } from "../modelo/InfoGrupo";
 import { grupoData } from "./dataServicios/grupoData";
 import { Red } from "./util/red";
 import { Constantes } from "../modelo/enums";
+import { Http } from "@angular/http";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs/Observable";
+import 'rxjs/add/observable/of';
 
-
+@Injectable()
 export class GrupoService extends BaseService {
     Items: Array<InfoGrupo>;
     private _grupo: grupoData;
@@ -14,80 +18,74 @@ export class GrupoService extends BaseService {
     //     this._info = value;
     // }
 
-    constructor(idUsuario: string) {
-        super(idUsuario);
-
+    constructor(public http: Http) {
+        super();
+        //  this.IdUsuario = idUsuario;
         this.Items = new Array<InfoGrupo>();
         this._grupo = new grupoData();
         this.Info = new InfoGrupo();
     }
 
-    cargar(): Promise<Array<InfoGrupo>> {
+    getNombreGrupo() {
+        if (this.Info.Nombre.length == 0)
+            this.Info.Nombre = this.Items.filter(_ => _.Id == this.Info.Id)[0].Nombre;
+
+        return this.Info.Nombre;
+    }
+    cargar(): Promise<boolean> {
 
         this.crearTabla();
 
-        return this.getAll();
+        return this.getAll().then(_ => {
+            this.Items = _;
+
+            return Promise.resolve(true);
+        });
+
+
     }
 
     getAll(): Promise<Array<InfoGrupo>> {
-        return this._grupo.getAll(this.IdUsuario).then(_ => {
-            if (_.length == 0) {
-                return this.postAPI();
+        return this._grupo.getAll(this.CodigoUsuario).then(a => {
+            if (a.length == 0) {
+                return this.postAPI().map(_ => {
+                    return _.map(i => {
+                        i.CodigoUsuario = this.CodigoUsuario;
+                        this.add(i);
+                        
+                        return i;
+                    });
+
+                }).toPromise<Array<InfoGrupo>>();
             }
+
+            return a;
         });
 
     }
 
-    postAPI():Promise<Array<InfoGrupo>> {
+    postAPI(): Observable<Array<InfoGrupo>> {
         if (!Red.revisarConexionInternet())
-            return Promise.reject("No existe conexion internet.");
+            return Observable.throw("No existe conexion internet.");
 
         var _url = "[HOST]api/grupo/listar/[ID_USUARIO]";
-        _url = _url.replace("[HOST]", Constantes.url).replace("[ID_USUARIO]", this.IdUsuario);
+        _url = _url.replace("[HOST]", Constantes.url).replace("[ID_USUARIO]", String(this.CodigoUsuario));
 
-        var xmlhttp = new XMLHttpRequest();
 
-        let _ = this;
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                //    var _grupo = new APIservicio.grupo(host, idUsuario);
-                return _.guardar(xmlhttp.responseText);
-            }
-
-        };
-
-        xmlhttp.open("GET", _url, true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-
-        xmlhttp.send();
-    }
-
-    guardar(data):Promise<Array<InfoGrupo>> {
-        let json = JSON.parse(data);
-
-        this.crearTabla();
-
-        for (var _cont = 0; _cont < json.length; _cont++) {
-            var _grupo = this.crearGrupo(json[_cont]);
-            _grupo.IdUsuario = this.IdUsuario;
-            this.Items.push(_grupo);
-            this.add(_grupo);
-        }
-        return Promise.resolve(this.Items);
+        return this.http.get(_url)
+            .map(_ => {
+                return _.json().map(i => {
+                    return new InfoGrupo(i);
+                })
+            });
 
     }
 
-    crearGrupo(item) {
-        let grupo = new InfoGrupo();
-        item.EstadoGrupo = item.Estado;
-        grupo.poblar(item);
-        return grupo;
-    }
 
     add(grupo: InfoGrupo) {
 
         this.getById(grupo.Id).then(_ => {
-            if (_ == undefined)
+            if (!_) // si no existe, guardo
                 this._grupo.add(grupo);
         });
 
@@ -136,14 +134,16 @@ export class GrupoService extends BaseService {
         if (_listado.length > 0)
             return _listado[0];
 
-        return new InfoGrupo();
+        return this.Items[0];
     }
-    getGrupoPorNombre(nombre, callback) {
 
-        this.Items.filter(function (el) {
-            if (el.Nombre.toLowerCase() == nombre)
-                callback(el);
-        });
+    getGrupoPorNombre(nombre): InfoGrupo {
+
+        let _respuesta = this.Items.filter(_ => _.Nombre.toLowerCase() == nombre);
+        if (_respuesta.length > 0)
+            return _respuesta[0];
+
+        return new InfoGrupo();
 
     }
 }

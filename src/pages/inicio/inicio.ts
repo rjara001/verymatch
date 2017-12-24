@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, LoadingController, ToastController } from 'ionic-angular';
 import { InfoBase, PageBase } from '../../modelo/InfoBase';
 import { globalDataService } from '../../servicios/globalDataService';
 import { OAuthService } from '../../servicios/oauth.service';
 import { Config } from '../../config';
-import { InfoUsuario } from '../../modelo/InfoUsuario';
 import { EstadoPage } from '../estado/estado';
 import { PrincipalPage } from '../principal/principal';
+import { InfoUsuario } from '../../modelo/InfoUsuario';
 /**
  * Generated class for the InicioPage page.
  *
@@ -27,26 +27,27 @@ export class InicioPage extends PageBase {
         , public navParams: NavParams
         , public alertCtrl: AlertController
         , public loadingCtrl: LoadingController
-        , oauthService: OAuthService) {
-        super(alertCtrl, loadingCtrl);
-        
+        , oauthService: OAuthService
+        , public toastCtrl: ToastController ) {
+        super(alertCtrl, loadingCtrl,toastCtrl );
+        this.navCtrl
         this.oauthService = oauthService;
         this.Info = new InfoUsuario();
         
     }
         login(source: string) {
             let _config:Config  = new Config();
-            _config.propio.usuario = this.Info.IdUsuario;
+            _config.propio.email = this.Info.Email;
             _config.propio.contraseña = this.Info.Contrasenia;
             _config.source = source;
 
             this.oauthService.login(_config)
                 .then(
                     _ => {
-                        if (_.accessToken.success)
+                        if (_.success)
                             this.redireccionLogin();
                         else
-                            this.mensaje("Validando credenciales.", _.accessToken.message);
+                            this.mensaje(_.message);
                     },
                     error => console.log('Problemas al momento de ingresar usuario, error:' + error),
                 );
@@ -66,15 +67,6 @@ export class InicioPage extends PageBase {
         this.navCtrl.setRoot(InicioPage, {}, { animate: true, direction: 'forward' });
     }
 
-    mensaje(titulo, texto) {
-        let alert = this.alertCtrl.create({
-            title: titulo,
-            subTitle: texto,
-            buttons: ['OK']
-          });
-          alert.present();
-
-    }
 
 
 

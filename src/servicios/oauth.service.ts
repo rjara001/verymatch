@@ -19,23 +19,35 @@ export class OAuthService {
 			if (!accessToken) {
 				return Promise.reject('No access token found');
 			}
-			let oauthToken = {
-				accessToken: accessToken,
-				source: config.source
-			};
-			this.setOAuthToken(oauthToken, config);
-			this.setCredentials(config);
-			return Promise.resolve(oauthToken);
+			if (accessToken.success)
+			{
+				let oauthToken = {
+					accessToken: accessToken,
+					source: config.source
+				};
+				this.setOAuthToken(oauthToken, config);
+	
+				return this.setCredentials(oauthToken, config).then(()=>{
+					return Promise.resolve(accessToken)
+				});
+	
+			}
+			return Promise.resolve(accessToken);
+
 		});
 	}
 
-	setCredentials(config: Config) {
+	setCredentials(oauthToken: any, config:Config):Promise<void> {
 
-		this.getProfile().then(_ => {
-			if (!_)
-				globalDataService.setIdUsuario(config.propio.usuario);
+		return this.getProfile().then(_ => {
+			if (_)
+			{
+				let _respuestaUsuario = JSON.parse(_._body);
+				globalDataService.setCodigoUsuario(_respuestaUsuario.idUsuario);
+				globalDataService.setEmailUsuario(_respuestaUsuario.idUsuario);
+			}				
 			else
-				globalDataService.setIdUsuario(_.username);
+				throw Error("Error al tratar de validar usuario.");
 
 			//window.localStorage.setItem("usuario", _.username);
 

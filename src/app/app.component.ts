@@ -9,6 +9,7 @@ import { ConfiguracionPage } from '../pages/configuracion/configuracion';
 import { globalDataService, Par } from '../servicios/globalDataService';
 import { ConfiguracionService } from '../servicios/ConfiguracionService';
 import { InicioPage } from '../pages/inicio/inicio';
+import { UsuarioPage } from '../pages/usuario/usuario';
 
 @Component({
 	templateUrl: 'app.html'
@@ -36,7 +37,8 @@ export class MyApp {
 			{ title: 'Jugar', component: JugarPage },
 			{ title: 'Asistente', component: AsistentePage },
 			{ title: 'Panel de Control', component: PrincipalPage },
-			{ title: 'Configuracion', component: ConfiguracionPage }
+			{ title: 'Configuracion', component: ConfiguracionPage },
+			{ title: 'Info Usuario', component: UsuarioPage }
 		];
 
 		this.rootPage;
@@ -76,7 +78,7 @@ export class MyApp {
 	
 	  _inicializar() {
 		 
-		if (globalDataService.getIdUsuario()) {
+		if (globalDataService.getCodigoUsuario()) {
 	
 		  this.rootPage = PrincipalPage;
 	/*
@@ -91,13 +93,13 @@ export class MyApp {
 		  var configuracion = new ConfiguracionService();
 		  configuracion.crearTabla(function () {
 	
-			configuracion.getOption(globalDataService.getIdUsuario(), configuracion.OPCION_SIEMPRE_ACTIVO, function (respuesta) {
-			  this.globalData.setData(new Par("BotonValidarSiempreActivo",  respuesta));
-			});
+			// configuracion.getOption(globalDataService.getCodigoUsuario(), configuracion.OPCION_SIEMPRE_ACTIVO, function (respuesta) {
+			//   this.globalData.setData(new Par("BotonValidarSiempreActivo",  respuesta));
+			// });
 	
-			configuracion.getOption(globalDataService.getIdUsuario(), configuracion.OPCION_INVERTIR_ORDEN, function (respuesta) {
-			  this.globalData.setData(new Par("InvertirOrdenJuego",  respuesta));
-			});
+			// configuracion.getOption(globalDataService.getCodigoUsuario(), configuracion.OPCION_INVERTIR_ORDEN, function (respuesta) {
+			//   this.globalData.setData(new Par("InvertirOrdenJuego",  respuesta));
+			// });
 		  });
 	
 		  //$http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line

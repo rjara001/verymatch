@@ -5,7 +5,14 @@ import { InfoGrupo } from "../modelo/InfoGrupo";
 import { BaseService } from "./BaseService";
 import { Red } from "./util/red";
 import { Constantes } from "../modelo/enums";
+import { Observable } from "rxjs/Observable";
+import { RequestOptions, Http } from "@angular/http";
+import { Headers } from '@angular/http';
+import { Injectable, NgModule } from "@angular/core";
+import { InfoResumen } from "../modelo/InfoResumen";
+import { _ParseAST } from "@angular/compiler";
 
+@Injectable()
 export class PalabraService extends BaseService {
     _info: InfoPalabra;
     Significado: string;
@@ -16,9 +23,8 @@ export class PalabraService extends BaseService {
     //Grupos: Array<InfoGrupo>;
     public Items: Array<InfoPalabra>;
 
-    constructor(idUsuario: string, idGrupo: number) {
-        super(idUsuario);
-        this._info = new InfoPalabra(idUsuario, idGrupo);
+    constructor(public http: Http) {
+        super();
 
         //   this.Grupos = new Array<InfoGrupo>();
         this.Items = new Array<InfoPalabra>();
@@ -26,78 +32,97 @@ export class PalabraService extends BaseService {
 
     }
 
+    iniciar(codigoUsuario: number, idGrupo: number) {
+        this._info = new InfoPalabra(codigoUsuario, idGrupo);
+        this.CodigoUsuario = codigoUsuario;
+    }
+
     getInfo(): InfoPalabra {
         return this._info;
     }
 
-    getDebeActualizar(idUsuario) {
-        return this._palabra.getDebeActualizar(idUsuario);
+    getDebeActualizar(codigoUsuario: number): Promise<InfoPalabra[]> {
+        return this._palabra.getDebeActualizar(codigoUsuario);
     }
 
-    getAll(idUsuario: string, idGrupo: number): Promise<InfoPalabra[]> {
-        return this._palabra.getAll(idUsuario, idGrupo).then(_ => {
-            if (_.length == 0) {
-                return this.postAPI();
+    getAll(codigoUsuario: number, idGrupo: number): Promise<InfoPalabra[]> {
+
+        return this._palabra.getAll(codigoUsuario, idGrupo).then(a => {
+            if (a.length == 0) {
+                return this.postAPI().map(_ => {
+                    return _.map(i => {
+                        this.add(i);
+                        return i;
+                    });
+
+                }).toPromise<Array<InfoPalabra>>();
             }
 
+            return a;
         });
-
     }
 
-    postAPI(): Promise<Array<InfoPalabra>> {
+    postAPI(): Observable<InfoPalabra[]> {
+        if (!Red.revisarConexionInternet())
+            return Observable.throw("No existe conexion internet.");
+
+        var _url = "[HOST]api/palabra/listar".replace("[HOST]", Constantes.url).replace("[ID_USUARIO]", String(this.CodigoUsuario));
+
+        var param = { IdUsuario: this.CodigoUsuario, IdGrupo: this._info.IdGrupo }
+
+        var _postData = JSON.stringify(param);
+
+        return this.http.post(_url
+            , _postData
+            , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+            .map(_ => {
+                return _.json().map(i => {
+                    let _palabra: InfoPalabra = new InfoPalabra(i.IdUsuario, i.IdGrupo);
+                    _palabra.poblar(i);
+                    
+                    return _palabra;
+                })
+            });
+
+    }
+    subirAPI(palabras:InfoPalabra[]): Promise<any> {
+
         if (!Red.revisarConexionInternet())
             return Promise.reject("No existe conexion internet.");
 
-        var _url = "[HOST]api/palabra/listar";
+        var _url = "[HOST]api/palabra/guardarpalabras".replace("[HOST]", Constantes.url);
 
-        _url = _url.replace("[HOST]", Constantes.url);
+        var _parametro = JSON.stringify(palabras);
 
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", _url, true);
-
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-
-        var param = { IdUsuario: this.IdUsuario, IdGrupo: this._info.IdGrupo }
-
-        let _ = this;
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                return _.guardarAll(xmlhttp.responseText);
-            }
-        }
-
-        xmlhttp.send(Red.JsonToURLEncoded(param));
-    }
-    guardarAll(data):Promise<Array<InfoPalabra>> {
-        let json = JSON.parse(data);
-
-        for (var _cont = 0; _cont < json.length; _cont++) {
-            var _palabra = this.crearPalabra(json[_cont]);
-
-            this.add(_palabra);
-            this.Items.push(_palabra);
-        }
-
-        return Promise.resolve(this.Items);
+        return this.http.post(_url
+            , _parametro
+            , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+            .toPromise();
+        
+            // _aux.toPromise().then(_=>{
+            //     return Promise.resolve(_);
+            // })
+            // .catch(_=>{
+            //     console.log(_);
+            //     Promise.reject(_);
+            // });
 
     }
-    
-        crearPalabra (item) {
-        let palabra = new InfoPalabra(this.IdUsuario, this._info.IdGrupo);
+
+    crearPalabra(item) {
+        let palabra = new InfoPalabra(this.CodigoUsuario, this._info.IdGrupo);
         palabra.poblar(item);
         return palabra;
     }
 
-    add(palabra) {
+    add(palabra: InfoPalabra): Promise<void> {
 
-        let _id = this._palabra.findById(palabra.Id).then(_=>{
+        return this._palabra.findById(palabra.Id).then(_ => {
             if (_ == undefined)
-                this._palabra.add(palabra);
+                return this._palabra.add(palabra);
             else
-                this._palabra.update(palabra);
-
+                return this._palabra.update(palabra);
         });
-
 
     }
 
@@ -125,13 +150,15 @@ export class PalabraService extends BaseService {
             .replace("ú", "u");
     }
 
-    getNumeroPendientes() {
-        return this._palabra.getNumeroPendientes(this._info.IdUsuario, null);
+    getNumeroPendientes(): Promise<number> {
+        return this._palabra.getNumeroPendientes(this._info.getCodigoUsuario()).then(_ => {
+            return _;
+        });
     }
 
     Coincide(significado, inversa) {
 
-        var _id = (inversa) ? this.Nombre : this.Significado;
+        var _id = this.Significado;
         var _valor = significado;
 
         if (_id == this.getSignificadoRefinado(significado))
@@ -172,64 +199,73 @@ export class PalabraService extends BaseService {
     }
 
     calcularResumen() {
-        var resumen = {
-            Total: 0
-            , NumeroRepeticionesActual: 0
-            , TotalAprendidas: 0
-            , RepetidasConocidas: [0, 0, 0, 0, 0]
-            , RepetidasNoConocidas: [0, 0, 0, 0, 0]
-            , PendientesPorSubir: 0
-            , IdUsuario: this._info.IdUsuario
-        };
+        // var resumen = {
+        //     Total: 0
+        //     , NumeroRepeticionesActual: 0
+        //     , TotalAprendidas: 0
+        //     , RepetidasConocidas: [0, 0, 0, 0, 0]
+        //     , RepetidasNoConocidas: [0, 0, 0, 0, 0]
+        //     , PendientesPorSubir: 0
+        //     , IdUsuario: this._info.IdUsuario
+        // };
+        this._info.Resumen = new InfoResumen();
+        this._info.Resumen.Total = 0;
+        this._info.Resumen.RepetidasNoConocidas[0] = 0;
+        this._info.Resumen.RepetidasNoConocidas[1] = 0;
+        this._info.Resumen.RepetidasNoConocidas[2] = 0;
+        this._info.Resumen.RepetidasNoConocidas[3] = 0;
 
-        resumen.Total = 0;
-        resumen.RepetidasNoConocidas[0] = 0;
-        resumen.RepetidasNoConocidas[1] = 0;
-        resumen.RepetidasNoConocidas[2] = 0;
-        resumen.RepetidasNoConocidas[3] = 0;
-
-        resumen.RepetidasConocidas[0] = 0;
-        resumen.RepetidasConocidas[1] = 0;
-        resumen.RepetidasConocidas[2] = 0;
-        resumen.RepetidasConocidas[3] = 0;
+        this._info.Resumen.RepetidasConocidas[0] = 0;
+        this._info.Resumen.RepetidasConocidas[1] = 0;
+        this._info.Resumen.RepetidasConocidas[2] = 0;
+        this._info.Resumen.RepetidasConocidas[3] = 0;
 
 
         for (var _cont = 0; _cont < this.Items.length; _cont++) {
-            resumen.Total++;
-            resumen.RepetidasNoConocidas[0] += ((this.Items[_cont].Repeticiones == 0 && !this.Items[_cont].EsConocido) ? 1 : 0);
-            resumen.RepetidasNoConocidas[1] += ((this.Items[_cont].Repeticiones == 1 && !this.Items[_cont].EsConocido) ? 1 : 0);
-            resumen.RepetidasNoConocidas[2] += ((this.Items[_cont].Repeticiones == 2 && !this.Items[_cont].EsConocido) ? 1 : 0);
-            resumen.RepetidasNoConocidas[3] += ((this.Items[_cont].Repeticiones == 3 && !this.Items[_cont].EsConocido) ? 1 : 0);
+            this._info.Resumen.Total++;
+            this._info.Resumen.RepetidasNoConocidas[0] += ((this.Items[_cont].Repeticiones == 0 && !this.Items[_cont].EsConocido) ? 1 : 0);
+            this._info.Resumen.RepetidasNoConocidas[1] += ((this.Items[_cont].Repeticiones == 1 && !this.Items[_cont].EsConocido) ? 1 : 0);
+            this._info.Resumen.RepetidasNoConocidas[2] += ((this.Items[_cont].Repeticiones == 2 && !this.Items[_cont].EsConocido) ? 1 : 0);
+            this._info.Resumen.RepetidasNoConocidas[3] += ((this.Items[_cont].Repeticiones == 3 && !this.Items[_cont].EsConocido) ? 1 : 0);
 
-            resumen.RepetidasConocidas[0] += ((this.Items[_cont].Repeticiones == 0 && this.Items[_cont].EsConocido) ? 1 : 0);
-            resumen.RepetidasConocidas[1] += ((this.Items[_cont].Repeticiones == 1 && this.Items[_cont].EsConocido) ? 1 : 0);
-            resumen.RepetidasConocidas[2] += ((this.Items[_cont].Repeticiones == 2 && this.Items[_cont].EsConocido) ? 1 : 0);
-            resumen.RepetidasConocidas[3] += ((this.Items[_cont].Repeticiones == 3 && this.Items[_cont].EsConocido) ? 1 : 0);
+            this._info.Resumen.RepetidasConocidas[0] += ((this.Items[_cont].Repeticiones == 0 && this.Items[_cont].EsConocido) ? 1 : 0);
+            this._info.Resumen.RepetidasConocidas[1] += ((this.Items[_cont].Repeticiones == 1 && this.Items[_cont].EsConocido) ? 1 : 0);
+            this._info.Resumen.RepetidasConocidas[2] += ((this.Items[_cont].Repeticiones == 2 && this.Items[_cont].EsConocido) ? 1 : 0);
+            this._info.Resumen.RepetidasConocidas[3] += ((this.Items[_cont].Repeticiones == 3 && this.Items[_cont].EsConocido) ? 1 : 0);
 
             if (this.Items[_cont].DebeActualizar)
-                resumen.PendientesPorSubir++;
+                this._info.Resumen.PendientesPorSubir++;
 
         }
 
-        if (resumen.RepetidasNoConocidas[0] > 0)
-            resumen.NumeroRepeticionesActual = 0;
-        if (resumen.RepetidasNoConocidas[1] > 0 && resumen.RepetidasNoConocidas[0] == 0)
-            resumen.NumeroRepeticionesActual = 1;
-        if (resumen.RepetidasNoConocidas[2] > 0 && resumen.RepetidasNoConocidas[1] == 0)
-            resumen.NumeroRepeticionesActual = 2;
-        if (resumen.RepetidasNoConocidas[3] > 0 && resumen.RepetidasNoConocidas[2] == 0)
-            resumen.NumeroRepeticionesActual = 3;
+        if (this._info.Resumen.RepetidasNoConocidas[0] > 0)
+            this._info.Resumen.NumeroRepeticionesActual = 0;
+        if (this._info.Resumen.RepetidasNoConocidas[1] > 0 && this._info.Resumen.RepetidasNoConocidas[0] == 0)
+            this._info.Resumen.NumeroRepeticionesActual = 1;
+        if (this._info.Resumen.RepetidasNoConocidas[2] > 0 && this._info.Resumen.RepetidasNoConocidas[1] == 0)
+            this._info.Resumen.NumeroRepeticionesActual = 2;
+        if (this._info.Resumen.RepetidasNoConocidas[3] > 0 && this._info.Resumen.RepetidasNoConocidas[2] == 0)
+            this._info.Resumen.NumeroRepeticionesActual = 3;
 
-        return resumen;
+        return this._info.Resumen;
     }
 
-    cargar(): Promise<InfoPalabra[]> {
+    cargar(idGrupo: number): Promise<boolean> {
+
+        this._info.IdGrupo = idGrupo;
 
         this.crearTabla();
 
-        let _promesa = this.getAll(this.IdUsuario, this._info.IdGrupo);
+        return this.getAll(this.CodigoUsuario, this._info.IdGrupo).then(_ => {
+            this.Items = _;
+            // .map(_=>{
+            //     // let _palabra = new InfoPalabra(this.CodigoUsuario, this._info.IdGrupo);
+            //     // _palabra.poblar(_);
+            //     return _;
+            // });
 
-        return _promesa;
+            return true;
+        });
 
     }
 
@@ -248,11 +284,46 @@ export class PalabraService extends BaseService {
         let json = JSON.parse(data);
 
         for (var _cont = 0; _cont < json.length; _cont++) {
-            var _palabra = new InfoPalabra(this._info.IdUsuario, this._info.IdGrupo);
+            var _palabra = new InfoPalabra(this._info.getCodigoUsuario(), this._info.IdGrupo);
             _palabra.poblar(json[_cont]);
 
             this.Items.push(_palabra);
         }
+    }
+
+    private guardarPalabrasParaActualizar(palabras):Promise<void> {
+
+        let promesas = []; // contador permite asegurar que una vez que termine el proceso pueda avanzar
+        for (var _cont = 0; _cont < palabras.length; _cont++) {
+            var item = palabras[_cont];
+            item.DebeActualizar = 0;
+            promesas.push(this.add(item));
+        }
+        return Promise.all(promesas).then(_=>{
+            return Promise.resolve();
+        });
+    }
+
+    restablecerPalabrasParaActualizar(palabras):Promise<any> {
+
+        // var _palabrasParaActualizar = [];
+
+        // this.Items.filter(function (item) {
+        //     if (item.DebeActualizar > 0)
+        //         _palabrasParaActualizar.push(item);
+        // })
+
+        if (palabras.length > 0) {
+            return this.subirAPI(palabras).then(() => {
+                return this.guardarPalabrasParaActualizar(palabras);
+            }).catch(error=>{
+                console.log(error);
+                return Promise.reject(error);
+            });
+
+        }
+        else
+            return Promise.resolve();
     }
 
 }

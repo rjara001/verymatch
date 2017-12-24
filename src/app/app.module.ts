@@ -22,6 +22,15 @@ import { globalDataService } from '../servicios/globalDataService';
 //import { PropioOauthProvider } from '../servicios/propio/propio-oauth.provider';
 import { InicioPageModule } from '../pages/inicio/inicio.module';
 import { PropioOauthProvider } from '../servicios/propio/propio-oauth.provider';
+import { GrupoService } from '../servicios/GrupoService';
+import { EstadoService } from '../servicios/EstadoService';
+import { PalabraService } from '../servicios/PalabraService';
+import { PalabraAccionService } from '../servicios/PalabraAccionService';
+import { Vibration } from '@ionic-native/vibration';
+import { ConfiguracionService } from '../servicios/ConfiguracionService';
+import { Insomnia } from '@ionic-native/insomnia';
+import { SpeechRecognition } from '@ionic-native/speech-recognition';
+import { TextToSpeech } from '@ionic-native/text-to-speech';
 
 @NgModule({
 	declarations: [
@@ -42,11 +51,11 @@ import { PropioOauthProvider } from '../servicios/propio/propio-oauth.provider';
 	bootstrap: [IonicApp],
 	entryComponents: [
 		MyApp,
-		AsistentePage,
 		ConfiguracionPage,
 		PrincipalPage,
 		RegistrarPage,
 		UsuarioPage,
+		AsistentePage,
 		JugarPage
 	],
 	providers: [
@@ -58,6 +67,15 @@ import { PropioOauthProvider } from '../servicios/propio/propio-oauth.provider';
 		OAuthService,
 		SQLite,
 		PropioOauthProvider,
+		GrupoService,
+		EstadoService,
+		PalabraService,
+		PalabraAccionService,
+		Vibration,
+		ConfiguracionService,
+		Insomnia,
+		TextToSpeech,
+		SpeechRecognition,
 		{provide: ErrorHandler, useClass: IonicErrorHandler}
 	]
 })
