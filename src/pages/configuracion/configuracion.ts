@@ -28,7 +28,7 @@ export class ConfiguracionPage extends PageBase {
     , public alertCtrl: AlertController
     , public loadingCtrl: LoadingController
     , public toastCtrl: ToastController) {
-    super(alertCtrl, loadingCtrl, toastCtrl)
+    super(alertCtrl, loadingCtrl, toastCtrl, globalData)
   }
 
   ngOnInit() {
@@ -41,12 +41,15 @@ export class ConfiguracionPage extends PageBase {
   _inicio() {
     this._textoOrdenJuego();
 
-    this.configuracion.getOption(this.getCodigoUsuario(), this.configuracion.OPCION_SIEMPRE_ACTIVO).then(_=>{
-      this.info.BotonValidarSiempreActivo = _;
-    });
+    this.configuracion.crearTabla().then(() => {
 
-    this.configuracion.getOption(this.getCodigoUsuario(), this.configuracion.OPCION_INVERTIR_ORDEN).then(_=> {
-      this.info.InvertirOrdenJuego =  _;
+      this.configuracion.getOption(this.getCodigoUsuario(), this.configuracion.OPCION_SIEMPRE_ACTIVO).then(_ => {
+        this.info.BotonValidarSiempreActivo = _;
+      });
+
+      this.configuracion.getOption(this.getCodigoUsuario(), this.configuracion.OPCION_INVERTIR_ORDEN).then(_ => {
+        this.info.InvertirOrdenJuego = _;
+      });
     });
   }
 
@@ -54,9 +57,8 @@ export class ConfiguracionPage extends PageBase {
 
     this._textoOrdenJuego();
 
-    this.configuracion.setOption(this.getCodigoUsuario(), this.configuracion.OPCION_SIEMPRE_ACTIVO, this.info.BotonValidarSiempreActivo).then(_=> 
-    {
-      this.configuracion.setOption(this.getCodigoUsuario(), this.configuracion.OPCION_INVERTIR_ORDEN, this.info.InvertirOrdenJuego).then(_=>{});
+    this.configuracion.setOption(this.getCodigoUsuario(), this.configuracion.OPCION_SIEMPRE_ACTIVO, this.info.BotonValidarSiempreActivo).then(_ => {
+      this.configuracion.setOption(this.getCodigoUsuario(), this.configuracion.OPCION_INVERTIR_ORDEN, this.info.InvertirOrdenJuego).then(_ => { });
     });
 
   }

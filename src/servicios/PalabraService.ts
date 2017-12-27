@@ -18,17 +18,17 @@ export class PalabraService extends BaseService {
     Significado: string;
     Nombre: string;
 
-    _palabra: palabraData;
+    //_palabra: palabraData;
     //idGrupo: string;
     //Grupos: Array<InfoGrupo>;
     public Items: Array<InfoPalabra>;
 
-    constructor(public http: Http) {
+    constructor(public http: Http, public _palabra: palabraData) {
         super();
 
         //   this.Grupos = new Array<InfoGrupo>();
         this.Items = new Array<InfoPalabra>();
-        this._palabra = new palabraData();
+        //this._palabra = new palabraData();
 
     }
 
@@ -46,31 +46,32 @@ export class PalabraService extends BaseService {
     }
 
     getAll(codigoUsuario: number, idGrupo: number): Promise<InfoPalabra[]> {
+        return this._palabra.getAll(codigoUsuario, idGrupo);
+        // return this._palabra.getAll(codigoUsuario, idGrupo).then(a => {
+        //     if (a.length == 0) {
+        //         return this.postAPI().map(_ => {
+        //             return _.map(i => {
+        //                 this.add(i);
+        //                 return i;
+        //             });
 
-        return this._palabra.getAll(codigoUsuario, idGrupo).then(a => {
-            if (a.length == 0) {
-                return this.postAPI().map(_ => {
-                    return _.map(i => {
-                        this.add(i);
-                        return i;
-                    });
+        //         }).toPromise<Array<InfoPalabra>>();
+        //     }
 
-                }).toPromise<Array<InfoPalabra>>();
-            }
-
-            return a;
-        });
+        //     return a;
+        // });
     }
 
     postAPI(): Observable<InfoPalabra[]> {
         if (!Red.revisarConexionInternet())
             return Observable.throw("No existe conexion internet.");
 
-        var _url = "[HOST]api/palabra/listar".replace("[HOST]", Constantes.url).replace("[ID_USUARIO]", String(this.CodigoUsuario));
+        var _url = "[HOST]api/palabra/listar".replace("[HOST]", Constantes.url);
 
         var param = { IdUsuario: this.CodigoUsuario, IdGrupo: this._info.IdGrupo }
 
         var _postData = JSON.stringify(param);
+
 
         return this.http.post(_url
             , _postData
@@ -79,13 +80,13 @@ export class PalabraService extends BaseService {
                 return _.json().map(i => {
                     let _palabra: InfoPalabra = new InfoPalabra(i.IdUsuario, i.IdGrupo);
                     _palabra.poblar(i);
-                    
+
                     return _palabra;
                 })
             });
 
     }
-    subirAPI(palabras:InfoPalabra[]): Promise<any> {
+    subirAPI(palabras: InfoPalabra[]): Promise<any> {
 
         if (!Red.revisarConexionInternet())
             return Promise.reject("No existe conexion internet.");
@@ -98,14 +99,14 @@ export class PalabraService extends BaseService {
             , _parametro
             , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
             .toPromise();
-        
-            // _aux.toPromise().then(_=>{
-            //     return Promise.resolve(_);
-            // })
-            // .catch(_=>{
-            //     console.log(_);
-            //     Promise.reject(_);
-            // });
+
+        // _aux.toPromise().then(_=>{
+        //     return Promise.resolve(_);
+        // })
+        // .catch(_=>{
+        //     console.log(_);
+        //     Promise.reject(_);
+        // });
 
     }
 
@@ -265,6 +266,9 @@ export class PalabraService extends BaseService {
             // });
 
             return true;
+        }).catch(_ => {
+            console.log(_);
+            return Promise.reject(_);
         });
 
     }
@@ -291,7 +295,7 @@ export class PalabraService extends BaseService {
         }
     }
 
-    private guardarPalabrasParaActualizar(palabras):Promise<void> {
+    private guardarPalabrasParaActualizar(palabras): Promise<void> {
 
         let promesas = []; // contador permite asegurar que una vez que termine el proceso pueda avanzar
         for (var _cont = 0; _cont < palabras.length; _cont++) {
@@ -299,12 +303,12 @@ export class PalabraService extends BaseService {
             item.DebeActualizar = 0;
             promesas.push(this.add(item));
         }
-        return Promise.all(promesas).then(_=>{
+        return Promise.all(promesas).then(_ => {
             return Promise.resolve();
         });
     }
 
-    restablecerPalabrasParaActualizar(palabras):Promise<any> {
+    restablecerPalabrasParaActualizar(palabras): Promise<any> {
 
         // var _palabrasParaActualizar = [];
 
@@ -316,7 +320,7 @@ export class PalabraService extends BaseService {
         if (palabras.length > 0) {
             return this.subirAPI(palabras).then(() => {
                 return this.guardarPalabrasParaActualizar(palabras);
-            }).catch(error=>{
+            }).catch(error => {
                 console.log(error);
                 return Promise.reject(error);
             });

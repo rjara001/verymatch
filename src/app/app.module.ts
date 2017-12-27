@@ -14,6 +14,7 @@ import { FacebookOauthProvider } from '../servicios/facebook/facebook-oauth.prov
 import { AsistentePage } from '../pages/asistente/asistente';
 import { PrincipalPage } from '../pages/principal/principal';
 import { RegistrarPage } from '../pages/registrar/registrar';
+import { RegistrarPageModule } from '../pages/registrar/registrar.module';
 import { UsuarioPage } from '../pages/usuario/usuario';
 import { ConfiguracionPage } from '../pages/configuracion/configuracion';
 import { JugarPage } from '../pages/jugar/jugar';
@@ -31,6 +32,10 @@ import { ConfiguracionService } from '../servicios/ConfiguracionService';
 import { Insomnia } from '@ionic-native/insomnia';
 import { SpeechRecognition } from '@ionic-native/speech-recognition';
 import { TextToSpeech } from '@ionic-native/text-to-speech';
+import { configuracionData } from '../servicios/dataServicios/configuracionData';
+import { BaseDataService } from '../servicios/dataServicios/BaseDataService';
+import { palabraData } from '../servicios/dataServicios/palabraData';
+import { grupoData } from '../servicios/dataServicios/grupoData';
 
 @NgModule({
 	declarations: [
@@ -38,7 +43,7 @@ import { TextToSpeech } from '@ionic-native/text-to-speech';
 		AsistentePage,
 		ConfiguracionPage,
 		PrincipalPage,
-		RegistrarPage,
+		//RegistrarPage,
 		UsuarioPage,
 		JugarPage
 	],
@@ -46,17 +51,18 @@ import { TextToSpeech } from '@ionic-native/text-to-speech';
 		BrowserModule,
 		HttpModule,
 		IonicModule.forRoot(MyApp),
-		InicioPageModule
+		InicioPageModule,
+		RegistrarPageModule
 	],
 	bootstrap: [IonicApp],
 	entryComponents: [
 		MyApp,
 		ConfiguracionPage,
 		PrincipalPage,
-		RegistrarPage,
+		//RegistrarPage,
 		UsuarioPage,
 		AsistentePage,
-		JugarPage
+		JugarPage,
 	],
 	providers: [
 		Config,
@@ -76,6 +82,11 @@ import { TextToSpeech } from '@ionic-native/text-to-speech';
 		Insomnia,
 		TextToSpeech,
 		SpeechRecognition,
+		ConfiguracionService,
+		configuracionData,
+		BaseDataService,
+		palabraData,
+		grupoData,
 		{provide: ErrorHandler, useClass: IonicErrorHandler}
 	]
 })

@@ -6,7 +6,7 @@ import { PalabraService } from "./PalabraService";
 
 @Injectable()
 export class PalabraAccionService{
-    constructor(public servicioGrupo:GrupoService, public servicioPalabra:PalabraService){
+    constructor(public servicioGrupo:GrupoService, public servicioPalabra:PalabraService, public globalData:globalDataService){
 
     }
 
@@ -16,7 +16,7 @@ export class PalabraAccionService{
         
         let el:InfoGrupo = this.servicioGrupo.getGrupoPorNombre(nombreGrupoDestino);
 
-        return this._mover(origen, el.Id, globalDataService.getIdGrupo());
+        return this._mover(origen, el.Id, this.globalData.getIdGrupo());
 
         //repeticiones (0:aprendidas
         //1:reconocidas

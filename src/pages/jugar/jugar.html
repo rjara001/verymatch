@@ -33,14 +33,14 @@
     <ion-item>
 
 
-      <ion-label stacked>
+      <ion-label inline>
         <img [src]="info.imgPalabra" />
       </ion-label>
       <ion-input type="text" [(ngModel)]="info.NombrePalabra"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label stacked>
+      <ion-label inline>
         <img [src]="info.imgSignificado" />
       </ion-label>
       <ion-icon item-end name="md-create" color="assertive" (click)="_revisar()" [hidden]="!info.puedeEditar"></ion-icon>
@@ -54,36 +54,32 @@
       <!-- Float the icon left -->
     </ion-item>
     <ion-item>
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <button ion-button icon-left block (click)="_validar()" [disabled]="info.finalizado">
-              <ion-icon name="md-checkbox"></ion-icon>
+        <ion-grid class="button-group">
+            <ion-row>
+              <ion-col>
+                <button small ion-button block color="primary" (click)="_validar()" [disabled]="info.finalizado">Validar</button>
+              </ion-col>
+              <ion-col>
+                <button small ion-button block color="secondary" (click)="_ver()" [disabled]="info.finalizado">Ver</button>
+              </ion-col>
+              <ion-col>
+                <button small ion-button block color="danger" (click)="_nuevo()" [disabled]="info.finalizado">Sig.</button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        <!-- <ion-toolbar no-border-top>
+        <ion-segment [(ngModel)]="pet">
+            <ion-segment-button value="kittens" (click)="_validar()" [disabled]="info.finalizado" >
               Validar
-            </button>
-          </ion-col>
-          <ion-col>
-            <button ion-button icon-center block (click)="_ver()" [disabled]="info.finalizado">
-              <ion-icon name="md-eye"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="puppies" (click)="_ver()" [disabled]="info.finalizado">
               Ver
-            </button>
-          </ion-col>
-          <ion-col>
-            <button ion-button icon-right block (click)="_nuevo()" [disabled]="info.finalizado">
-              <ion-icon name="md-fastforward"></ion-icon>
-              Siguiente
-            </button>
-          </ion-col>
-        </ion-row>
-
-      </ion-grid>
-
-      <!-- Float the icon right -->
-
-      <!-- Float the icon right -->
-
-
-
+            </ion-segment-button>
+            <ion-segment-button value="dunken" (click)="_nuevo()" [disabled]="info.finalizado">
+                Siguiente
+              </ion-segment-button>
+            </ion-segment></ion-toolbar>
+       -->
     </ion-item>
 
   </ion-item-group>

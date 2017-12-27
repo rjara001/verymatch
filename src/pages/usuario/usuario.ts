@@ -29,7 +29,7 @@ export class UsuarioPage extends PageBase{
     , public alertCtrl: AlertController
     , public loadingCtrl: LoadingController
     , public toastCtrl: ToastController) {
-    super(alertCtrl, loadingCtrl, toastCtrl)
+    super(alertCtrl, loadingCtrl, toastCtrl, globalData)
   }
 
   ngOnInit(){

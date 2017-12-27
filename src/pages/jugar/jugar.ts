@@ -38,8 +38,10 @@ export class JugarPage extends PageBase {
     , public servicio: EstadoService
     , public palabraService: PalabraService
     , public vibration: Vibration
-    , public toastCtrl: ToastController) {
-    super(alertCtrl, loadingCtrl, toastCtrl);
+    , public toastCtrl: ToastController
+    , public globalData:globalDataService
+    , public _configuracion: ConfiguracionService) {
+    super(alertCtrl, loadingCtrl, toastCtrl, globalData);
 
     this.info = new InfoJugar();
   }
@@ -51,19 +53,23 @@ export class JugarPage extends PageBase {
     this.info.grupo = this.servicio.servicioGrupo.getNombreGrupo();
     this.palabras = this.servicio.servicioPalabra.Items;
 
-    var _configuracion = new ConfiguracionService();
+    //var _configuracion = new ConfiguracionService();
 
     this.show();
-
-    _configuracion.getOption(globalDataService.getCodigoUsuario()
-      , _configuracion.OPCION_SIEMPRE_ACTIVO).then(_ => {
+	  this._configuracion.crearTabla().then(_=> {
+ 
+      this._configuracion.getOption(this.getCodigoUsuario()
+      , this._configuracion.OPCION_SIEMPRE_ACTIVO).then(_ => {
         this.info.ValidarSiempreActivo = _;
-        _configuracion.getOption(globalDataService.getCodigoUsuario()
-          , _configuracion.OPCION_INVERTIR_ORDEN).then(_ => {
+        this._configuracion.getOption(this.getCodigoUsuario()
+          , this._configuracion.OPCION_INVERTIR_ORDEN).then(_ => {
             this._inventario.OrdenJuego = _;
             this._inicio();
           });
       });
+
+    });
+   
 
 
 

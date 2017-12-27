@@ -33,8 +33,9 @@ export class EstadoPage extends PageBase {
     , public platform: Platform
     , public servicio: EstadoService
     , public toastCtrl: ToastController
-    , public chRef: ChangeDetectorRef) {
-    super(alertCtrl, loadingCtrl, toastCtrl);
+    , public chRef: ChangeDetectorRef
+    , public globalData:globalDataService) {
+    super(alertCtrl, loadingCtrl, toastCtrl, globalData);
 
     this.info = new InfoEstadoPage();
   }
@@ -43,8 +44,8 @@ export class EstadoPage extends PageBase {
 
     this.show();
 
-    this._inicio().then(_ => {
-      this.hide()
+    this._inicio().then(() => {
+      this.hide();
     }).catch(_=>{
       this.hide()
       this.alerta("Cargando App", "Se presentó un inconveniente al cargar los datos, favor asegurate que tienes conexion de datos");
@@ -84,7 +85,7 @@ export class EstadoPage extends PageBase {
 
   public cargar(): Promise<void> {
 
-    let idGrupoStorage = globalDataService.getIdGrupo();
+    let idGrupoStorage = this.globalData.getIdGrupo();
 
     if (idGrupoStorage)
       this.servicio.servicioGrupo.Info.Id = Number(idGrupoStorage);
@@ -94,10 +95,7 @@ export class EstadoPage extends PageBase {
       if (this.servicio.servicioGrupo.Info.Id < 0 && this.servicio.servicioGrupo.Items.length > 0)
         this.servicio.servicioGrupo.Info.Id = this.servicio.servicioGrupo.Items[0].Id;
 
-      globalDataService.setIdGrupo(this.servicio.servicioGrupo.Info.Id);
-
-      //TODO: Revisar utilidad
-      // globalDataService.setData(new Par("grupo", this.info.grupoInicial));
+        this.globalData.setIdGrupo(this.servicio.servicioGrupo.Info.Id);
 
       return Promise.resolve();
 
@@ -107,7 +105,7 @@ export class EstadoPage extends PageBase {
   _calcularResumen() {
 
     this.info.resumen = this.servicio.servicioPalabra.calcularResumen();
-
+    this.info.resumen.PendientesPorSubir = 0;
     this.servicio.servicioPalabra.getNumeroPendientes().then(_ => {
       this.info.resumen.PendientesPorSubir = _;
     });
@@ -137,7 +135,7 @@ export class EstadoPage extends PageBase {
     if (!idgrupo)
       return;
 
-    globalDataService.setIdGrupo(idgrupo);
+      this.globalData.setIdGrupo(idgrupo);
     this.servicio.servicioGrupo.Info.Id = idgrupo;
 
     this.show();

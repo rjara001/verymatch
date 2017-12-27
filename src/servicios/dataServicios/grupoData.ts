@@ -1,7 +1,10 @@
 import { InfoGrupo } from "../../modelo/InfoGrupo";
 import { BaseDataService } from "./BaseDataService";
 import { Console } from "@angular/core/src/console";
+import { SQLite } from "@ionic-native/sqlite";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class grupoData extends BaseDataService{
     
     TEXT_CREATE:string = "create table if not exists Grupo (Id integer, Nombre text, EstadoGrupo integer, NumeroMatch integer, CantidadMatch integer, CodigoUsuario integer)";
@@ -10,12 +13,12 @@ export class grupoData extends BaseDataService{
     TEXT_TRAER_POR_ID:string = "select Id, Nombre, EstadoGrupo, NumeroMatch, CantidadMatch, CodigoUsuario from Grupo where Id = ?";
     TEXT_TRAER_TODOS:string = "select Id, Nombre, EstadoGrupo, NumeroMatch, CantidadMatch, CodigoUsuario from Grupo where CodigoUsuario = ?";
 
-    constructor() {
-        super();
+    constructor(public sqlite:SQLite) {
+        super(sqlite);
     }
   
     crearTabla() {
-        return this.EjecutarNoSQL(this.TEXT_CREATE);
+         this.EjecutarNoSQL(this.TEXT_CREATE);
     }
 
     add(grupo:InfoGrupo) {

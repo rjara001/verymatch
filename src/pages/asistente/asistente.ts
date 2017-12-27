@@ -15,6 +15,7 @@ import { TextToSpeech } from '@ionic-native/text-to-speech';
 import { SpeechRecognition } from '@ionic-native/speech-recognition';
 import { Observable } from 'rxjs/Observable';
 import { Constantes } from '../../modelo/enums';
+import { configuracionData } from '../../servicios/dataServicios/configuracionData';
 /**
  * Generated class for the AsistentePage page.
  *
@@ -44,8 +45,10 @@ export class AsistentePage extends PageBase {
     , public toastCtrl: ToastController
     , public insomnia: Insomnia
     , private tts: TextToSpeech
-    , private speechrecognizer: SpeechRecognition) {
-    super(alertCtrl, loadingCtrl, toastCtrl);
+    , private speechrecognizer: SpeechRecognition
+    , public globalData:globalDataService
+    , public _configuracion:ConfiguracionService) {
+    super(alertCtrl, loadingCtrl, toastCtrl, globalData);
     // super(navCtrl
     //   , navParams
     //   , loadingCtrl
@@ -67,15 +70,15 @@ export class AsistentePage extends PageBase {
         this.info.grupo = this.servicio.servicioGrupo.getNombreGrupo();
         this.palabras = this.servicio.servicioPalabra.Items;
     
-        var _configuracion = new ConfiguracionService();
+  //      var _configuracion = new ConfiguracionService();
     
         this.show();
     
-        _configuracion.getOption(globalDataService.getCodigoUsuario()
-          , _configuracion.OPCION_SIEMPRE_ACTIVO).then(_ => {
+        this._configuracion.getOption(this.getCodigoUsuario()
+          , this._configuracion.OPCION_SIEMPRE_ACTIVO).then(_ => {
             this.info.ValidarSiempreActivo = _;
-            _configuracion.getOption(globalDataService.getCodigoUsuario()
-              , _configuracion.OPCION_INVERTIR_ORDEN).then(_ => {
+            this._configuracion.getOption(this.getCodigoUsuario()
+              , this._configuracion.OPCION_INVERTIR_ORDEN).then(_ => {
                 this._inventario.OrdenJuego = _;
                 this._inicio();
               });

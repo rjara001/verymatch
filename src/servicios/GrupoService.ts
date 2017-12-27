@@ -11,18 +11,18 @@ import 'rxjs/add/observable/of';
 @Injectable()
 export class GrupoService extends BaseService {
     Items: Array<InfoGrupo>;
-    private _grupo: grupoData;
+   // private _grupo: grupoData;
     public Info: InfoGrupo;
 
     // public setGrupo(value: InfoGrupo) {
     //     this._info = value;
     // }
 
-    constructor(public http: Http) {
+    constructor(public http: Http, public _grupo:grupoData) {
         super();
         //  this.IdUsuario = idUsuario;
         this.Items = new Array<InfoGrupo>();
-        this._grupo = new grupoData();
+        //this._grupo = new grupoData();
         this.Info = new InfoGrupo();
     }
 

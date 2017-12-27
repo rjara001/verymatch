@@ -1,6 +1,9 @@
 import { InfoConfiguracion } from "../../modelo/InfoConfiguracion";
 import { BaseDataService } from "./BaseDataService";
+import { SQLite } from "@ionic-native/sqlite";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class configuracionData extends BaseDataService {
 
 
@@ -10,11 +13,11 @@ export class configuracionData extends BaseDataService {
     TEXT_TRAER_POR_ID: string = "select Id, Opciones, CodigoUsuario from Configuracion where Id = ?";
     TEXT_TRAER_TODOS: string = "select Id, Opciones, CodigoUsuario from Configuracion where CodigoUsuario = ?";
 
-    constructor() {
-        super();
+    constructor(public sqlite:SQLite) {
+        super(sqlite);
     }
 
-    crearTabla(callback: () => void) {
+    crearTabla():Promise<any> {
         return this.EjecutarNoSQL(this.TEXT_CREATE);
   
     }

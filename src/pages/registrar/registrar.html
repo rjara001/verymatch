@@ -13,6 +13,29 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
+  <form name="registro" [formGroup]="registerForm" (ngSubmit)="registrar()">
+    <ion-list>
+      <ion-item>
+        <ion-label fixed>Email</ion-label>
+        <ion-input placeholder="tuemail@ejemplo.com" type="text" formControlName="email" required></ion-input>
+      </ion-item>
+      <ion-item no-lines *ngIf="( registerForm.get('email').hasError('required') || registerForm.get('email').hasError('email') ) && registerForm.get('email').touched">
+
+        <div class="error" *ngIf="registerForm.get('email').hasError('required') && registerForm.get('email').touched">
+          Email es requerido
+        </div>
+
+        <div class="error" *ngIf="registerForm.get('email').hasError('email') && registerForm.get('email').touched">
+          Email no es valido
+        </div>
+
+      </ion-item>
+      <button full ion-button [disabled]="registerForm.invalid">Registrar</button>
+      
+    </ion-list>
+
+
+  </form>
 
 </ion-content>

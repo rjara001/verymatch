@@ -6,16 +6,15 @@ import { ToastController } from 'ionic-angular';
 
 export class InfoBase {
     Grupo: InfoGrupo;
-    globalData: globalDataService;
-
+    private _codigoUsuario:number;
+  
     public getCodigoUsuario(): number {
-        return globalDataService.getCodigoUsuario();
+        return this._codigoUsuario;
     }
 
     public setCodigoUsuario(codigo:number){
-        globalDataService.setCodigoUsuario(codigo);
+        this._codigoUsuario = codigo;
     }
-
 
 }
 
@@ -24,7 +23,8 @@ export class PageBase {
 
     constructor(public alertCtrl: AlertController
         , public loadingCtrl: LoadingController
-        , public toastCtrl: ToastController) {
+        , public toastCtrl: ToastController
+        , public globalData: globalDataService) {
 
     }
     hide() {
@@ -56,15 +56,15 @@ export class PageBase {
 
     public getCodigoUsuario(): number {
 
-        return globalDataService.getCodigoUsuario();
+        return this.globalData.getCodigoUsuario();
     }
 
     public getEmailUsuario(): string {
         
-                return globalDataService.getEmailUsuario();
+                return this.globalData.getEmailUsuario();
             }
     public getIdGrupo(): number {
-        return globalDataService.getIdGrupo();
+        return this.globalData.getIdGrupo();
     }
 
     public mensaje(texto) {

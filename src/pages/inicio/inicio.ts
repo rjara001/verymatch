@@ -28,8 +28,10 @@ export class InicioPage extends PageBase {
         , public alertCtrl: AlertController
         , public loadingCtrl: LoadingController
         , oauthService: OAuthService
-        , public toastCtrl: ToastController ) {
-        super(alertCtrl, loadingCtrl,toastCtrl );
+        , public toastCtrl: ToastController
+        , public globalData: globalDataService ) {
+
+        super(alertCtrl, loadingCtrl,toastCtrl, globalData);
         this.navCtrl
         this.oauthService = oauthService;
         this.Info = new InfoUsuario();

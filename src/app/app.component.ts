@@ -24,7 +24,11 @@ export class MyApp {
 
 	@ViewChild(Nav) nav: Nav;
 
-	constructor(app: App, platform: Platform, menu: MenuController, private statusBar: StatusBar) {
+	constructor(app: App
+		, platform: Platform
+		, menu: MenuController
+		, private statusBar: StatusBar
+		, private globalData:globalDataService) {
 		this.menu = menu;
 		this.app = app;
 		this.platform = platform;
@@ -34,11 +38,11 @@ export class MyApp {
 
 		// set our app's pages
 		this.pages = [
-			{ title: 'Jugar', component: JugarPage },
-			{ title: 'Asistente', component: AsistentePage },
-			{ title: 'Panel de Control', component: PrincipalPage },
-			{ title: 'Configuracion', component: ConfiguracionPage },
-			{ title: 'Info Usuario', component: UsuarioPage }
+			{ title: 'Jugar', component: JugarPage , icon: 'md-game-controller-b'},
+			{ title: 'Asistente', component: AsistentePage, icon: 'md-microphone' },
+			{ title: 'Panel de Control', component: PrincipalPage, icon: 'md-pulse' },
+			{ title: 'Configuracion', component: ConfiguracionPage, icon: 'md-build' },
+			{ title: 'Info Usuario', component: UsuarioPage, icon: 'md-body' }
 		];
 
 		this.rootPage;
@@ -78,33 +82,9 @@ export class MyApp {
 	
 	  _inicializar() {
 		 
-		if (globalDataService.getCodigoUsuario()) {
+		if (this.globalData.getCodigoUsuario()) {
 	
 		  this.rootPage = PrincipalPage;
-	/*
-		  $rootScope.globals.emailSoporte = "verymatch.net@gmail.com";
-		  $rootScope.globals.hostSoporte = "http://www.verymatch.net";
-		  $rootScope.globals.version = appVersion;
-	  */
-	  //    $rootScope.globals.Opciones = { BotonValidarSiempreActivo: false, InvertirOrdenJuego: false }
-	
-	
-	  
-		  var configuracion = new ConfiguracionService();
-		  configuracion.crearTabla(function () {
-	
-			// configuracion.getOption(globalDataService.getCodigoUsuario(), configuracion.OPCION_SIEMPRE_ACTIVO, function (respuesta) {
-			//   this.globalData.setData(new Par("BotonValidarSiempreActivo",  respuesta));
-			// });
-	
-			// configuracion.getOption(globalDataService.getCodigoUsuario(), configuracion.OPCION_INVERTIR_ORDEN, function (respuesta) {
-			//   this.globalData.setData(new Par("InvertirOrdenJuego",  respuesta));
-			// });
-		  });
-	
-		  //$http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
-		  //this.nav.popToRoot();
-	
 		}
 		else
 		  this.rootPage = InicioPage;

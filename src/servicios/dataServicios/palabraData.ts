@@ -1,7 +1,10 @@
 import { InfoPalabra } from "../../modelo/InfoPalabra";
 import { BaseDataService } from "./BaseDataService";
 import {InfoBase} from '../../modelo/InfoBase';
+import { SQLite } from "@ionic-native/sqlite";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class palabraData extends BaseDataService {
 
     TEXT_CREATE: string = "create table if not exists Palabra (Id integer, Nombre text, Significado text, Indice integer, EsConocido integer, Repeticiones integer, CodigoUsuario integer, IdGrupo integer, DebeActualizar integer)";
@@ -14,8 +17,8 @@ export class palabraData extends BaseDataService {
     TEXT_PENDIENTES: string = "select count(*) Cantidad from Palabra where CodigoUsuario = ? and DebeActualizar==1";
     TEXT_DEBE_ACTUALIZAR: string = "select Id, Nombre, Significado, Indice, EsConocido, Repeticiones, CodigoUsuario, IdGrupo, DebeActualizar from Palabra where CodigoUsuario = ? and DebeActualizar = 1";
 
-    constructor() {
-        super();
+    constructor(public sqlite:SQLite) {
+        super(sqlite);
     }
 
     crearTabla() {

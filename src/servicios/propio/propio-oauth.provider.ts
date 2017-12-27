@@ -25,9 +25,10 @@ export class authUsuario {
 @Injectable()
 export class PropioOauthProvider implements IOathProvider {
     usuario: authUsuario;
-    globalData: globalDataService;
 
-    constructor(public http: Http) { }
+    constructor(public http: Http, public globalData: globalDataService) {
+        this.usuario = new authUsuario();
+    }
 
     /*  
       this.Login = Login;
@@ -37,7 +38,7 @@ export class PropioOauthProvider implements IOathProvider {
 
     getProfile(accessToken: string): Promise<any> {
         if (!Red.revisarConexionInternet())
-        return;
+            return;
 
         var _url = "[HOST]/api/usuariowrapper/BuscarPorEmail";
 
@@ -50,7 +51,7 @@ export class PropioOauthProvider implements IOathProvider {
             , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
             .toPromise();
     }
-    
+
     login(config: Config): Promise<any> {
         this.usuario = new authUsuario();
         this.usuario.IdUsuario = config.propio.email;
@@ -87,59 +88,31 @@ export class PropioOauthProvider implements IOathProvider {
 
     }
 
-    Register(usuario, callback) {
 
-        //var response;
-        //userService.Register(username)
-        //    .then(function (responseObject) {
-        //        if (responseObject.data == 'UsuarioCreado') {
-        //            response = { success: true };
-        //        } else {
-        //            response = { success: false, message: responseObject.data };
-        //        }
-        //        callback(response);
-        //    });
-        usuario.idapporigen = Constantes.idapporigen;
-        usuario.tokenNotificacion = Constantes.tokenNotificacion;
-
-        this.registrar(callback);
-
-    }
-
-    registrar(callback) {
+    registrar(): Promise<any> {
 
         if (!Red.revisarConexionInternet())
             return;
 
-        var _url = "[HOST]api/usuariowrapper/registrar";
+        var _url = "[HOST]api/usuariowrapper/registrar".replace("[HOST]", Constantes.url);
 
-        _url = _url.replace("[HOST]", Constantes.url);
+        var _postData = JSON.stringify(this.usuario);
 
-        var xmlhttp = new XMLHttpRequest();
-
-        var _parametro = null;//this.toParametro();
-
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                callback(xmlhttp.responseText);
-            }
-        }.bind(this);
-
-        xmlhttp.open("POST", _url, true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-
-        xmlhttp.send(_parametro);
+        return this.http.post(_url
+            , _postData
+            , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+            .toPromise();
     }
 
     SetCredentials(codigoUsuario: number, password: string, callback) {
         var authdata = Base64.encode(String(codigoUsuario) + ':' + password);
 
 
-//        this.usuario.Email = username;
+        //        this.usuario.Email = username;
 
         //  Register(usuario, callback);//  No recuerdo cual era la necesidad de esta linea (Register).
 
-        globalDataService.setCodigoUsuario(codigoUsuario);
+        this.globalData.setCodigoUsuario(codigoUsuario);
         // this.globalData.setData(new Par("idUsuario", username));
         // this.globalData.setData(new Par("authdata", authdata));
 
@@ -151,7 +124,7 @@ export class PropioOauthProvider implements IOathProvider {
     }
 
     ClearCredentials() {
-        globalDataService.setCodigoUsuario(-1);
+        this.globalData.setCodigoUsuario(-1);
         //$http.defaults.headers.common.Authorization = 'Basic ';
     }
 }

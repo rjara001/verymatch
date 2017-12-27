@@ -1,24 +1,26 @@
 import { configuracionData } from "./dataServicios/configuracionData";
-import { palabraData } from "./dataServicios/palabraData";
 import { InfoConfiguracion } from "../modelo/InfoConfiguracion";
+import { palabraData } from "./dataServicios/palabraData";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class ConfiguracionService {
 
     SESSION: Number = 2;
     OPCION_SIEMPRE_ACTIVO: Number = 0;
     OPCION_INVERTIR_ORDEN: Number = 1;
 
-    _configuracion: configuracionData;
+    //_configuracion: configuracionData;
 
-    constructor() {
-        this._configuracion = new configuracionData();
+    constructor(public _configuracion: configuracionData, public palabraData:palabraData) {
+  //      this._configuracion = new configuracionData();
     }
     getAll(codigoUsuario):Promise<InfoConfiguracion[]> {
         return this._configuracion.getAll(codigoUsuario);
     }
 
     getDebeActualizar(codigoUsuario, callback) {
-        return new palabraData().getDebeActualizar(codigoUsuario);
+        return this.palabraData.getDebeActualizar(codigoUsuario);
     }
 
     add(configuracion): Promise<void> {
@@ -76,8 +78,8 @@ export class ConfiguracionService {
         });
     }
 
-    crearTabla(callback) {
-        this._configuracion.crearTabla(callback);
+    crearTabla():Promise<any> {
+        return this._configuracion.crearTabla();
     }
 
 }

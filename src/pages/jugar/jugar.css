@@ -2,3 +2,30 @@ page-jugar ion-item-group ion-item-divider ion-note {
   right: 5px;
   position: absolute;
 }
+
+page-jugar .button-group .col:first-child:not(:last-child) {
+  padding-right: 0;
+}
+
+page-jugar .button-group .col:first-child:not(:last-child) .button {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+page-jugar .button-group .col:not(:first-child):not(:last-child) {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+page-jugar .button-group .col:not(:first-child):not(:last-child) .button {
+  border-radius: 0;
+}
+
+page-jugar .button-group .col:last-child:not(:first-child) {
+  padding-left: 0;
+}
+
+page-jugar .button-group .col:last-child:not(:first-child) .button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}

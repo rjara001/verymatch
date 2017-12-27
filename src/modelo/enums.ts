@@ -4,7 +4,7 @@ export enum Constantes{
     , idapporigen = 2
     , imgHablado= "assets/imgs/Chat.png"
     , tokenNotificacion = "Notificacion.Ingles.Registro"
-    , url = "http://localhost:62442/"
+    , url = "https://www.verymatch.net/"
     , emailSoporte = "verymatch.net@gmail.com"
     , hostSoporte = "http://www.verymatch.net"
     , version = "0.0.0"
