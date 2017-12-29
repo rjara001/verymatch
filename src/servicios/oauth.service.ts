@@ -7,6 +7,7 @@ import { Config } from '../config';
 import { IOAuthToken } from '../modelo/oauth-token.model';
 import { globalDataService } from './globalDataService';
 import { Constantes } from '../modelo/enums';
+import { OAuthProfile } from '../modelo/oauth-profile.model';
 
 @Injectable()
 export class OAuthService {
@@ -15,42 +16,64 @@ export class OAuthService {
 	constructor(injector: Injector, public globalData: globalDataService, public servicioPropio: PropioOauthProvider) {
 		this.injector = injector;
 	}
-	login(config: Config): Promise<any> {
-		return this.getOAuthService(config.source).login(config).then(accessToken => {
-			if (!accessToken) {
-				return Promise.reject('No access token found');
-			}
-			if (accessToken.success) {
-				let oauthToken = {
-					accessToken: accessToken,
-					source: config.source
-				};
-				this.setOAuthToken(oauthToken, config);
-
-				return this.setCredentials(oauthToken, config).then(() => {
-					return Promise.resolve(accessToken)
-				});
-
-			}
-			return Promise.resolve(accessToken);
-
+	
+	logOut(config: Config){
+		this.getOAuthService(config.source).logOut(config).then(_=>{
+			this.globalData.clear()
 		});
 	}
 
-	setCredentials(oauthToken: any, config: Config): Promise<void> {
+	login(config: Config): Promise<any> {
+		return this.getOAuthService(config.source).login(config).then(_perfil => {
 
-		return this.getProfile().then(_ => {
-			if (_) {
-				let _respuestaUsuario = JSON.parse(_._body);
-				this.globalData.setCodigoUsuario(_respuestaUsuario.idUsuario);
-				this.globalData.setEmailUsuario(config.propio.email);
-			}
-			else
-				throw Error("Error al tratar de validar usuario.");
+			if (!_perfil)
+				return Promise.resolve({ success: true, message: 'usuario y/o contraseña incorrectos' });
 
-			//window.localStorage.setItem("usuario", _.username);
+			return this.setProfile(_perfil).then(_ => {
+				this.setOAuthToken(_, config);
 
-		})
+				this.setCredentials(_, config);
+
+				return Promise.resolve({ success: true, message: 'logeado con exito' });
+			});
+
+
+
+			//return Promise.resolve(accessToken);
+
+		});
+	}
+	setProfile(oauthToken: OAuthProfile): Promise<OAuthProfile> {
+		this.servicioPropio.usuario.IdUsuario = oauthToken.email;
+		this.servicioPropio.usuario.Olvido = false;
+
+		this.servicioPropio.usuario.idapporigen = Constantes.idapporigen;
+
+		return this.servicioPropio.getProfile().then(_ => {
+			oauthToken.IdUsuario = JSON.parse(_._body).idUsuario;
+
+			return Promise.resolve(oauthToken);
+
+		});
+	}
+	setCredentials(oauthToken: OAuthProfile, config: Config) {
+		// console.log("entrando a obtener credenciales");
+		// return this.getProfile().then(_ => {
+		// 	if (_) {
+		// 		console.log(_);
+		// 		console.log(_._body);
+
+		// 		let _respuestaUsuario = JSON.parse(_._body);
+		// 		this.globalData.setCodigoUsuario(_respuestaUsuario.idUsuario);
+		this.globalData.setEmailUsuario(oauthToken.email);
+		this.globalData.setCodigoUsuario(oauthToken.IdUsuario);
+		// 	}
+		// 	else
+		// 		throw Error("Error al tratar de validar usuario.");
+
+		// 	//window.localStorage.setItem("usuario", _.username);
+
+		// })
 
 	}
 
@@ -67,7 +90,7 @@ export class OAuthService {
 				throw new Error(`Source '${source}' is not valid`);
 		}
 	}
-	setOAuthToken(token: IOAuthToken, config: Config) {
+	setOAuthToken(token: OAuthProfile, config: Config) {
 
 		localStorage.setItem(this.oauthTokenKey, JSON.stringify(token));
 
@@ -77,13 +100,14 @@ export class OAuthService {
 		return token ? JSON.parse(token) : null;
 	}
 
-	getProfile(): Promise<any> {
-		if (!this.isAuthorized()) {
-			return Promise.reject('You are not authorized');
-		}
-		let oauthService = this.getOAuthService();
-		return oauthService.getProfile(this.getOAuthToken().accessToken);
-	}
+	// getProfile(): Promise<any> {
+	// 	if (!this.isAuthorized()) {
+	// 		return Promise.reject('You are not authorized');
+	// 	}
+	// 	let oauthService = this.getOAuthService();
+	// 	return oauthService.getProfile(this.getOAuthToken().accessToken);
+	// }
+
 	isAuthorized(): boolean {
 		return !!this.getOAuthToken();
 	}

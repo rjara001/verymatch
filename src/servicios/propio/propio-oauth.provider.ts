@@ -1,7 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { Http, RequestOptions } from '@angular/http';
 import { IOathProvider } from '../oauth.provider.interface';
-import { Oauth } from 'ng2-cordova-oauth/oauth';
 import { Facebook } from 'ng2-cordova-oauth/provider/facebook';
 import { Config } from '../../config';
 //import { loginAuthPropioService, authUsuario } from './login-auth.propio.service';
@@ -10,6 +9,7 @@ import { globalDataService } from '../globalDataService';
 import { Red } from '../util/red';
 import { Headers } from '@angular/http';
 import { Header } from 'ionic-angular/components/toolbar/toolbar-header';
+import { OAuthProfile } from '../../modelo/oauth-profile.model';
 
 interface ILoginResponse {
     access_token: string;
@@ -36,7 +36,7 @@ export class PropioOauthProvider implements IOathProvider {
       this.ClearCredentials = ClearCredentials;
       this.Register = Register;*/
 
-    getProfile(accessToken: string): Promise<any> {
+    getProfile(): Promise<any> {
         if (!Red.revisarConexionInternet())
             return;
 
@@ -51,8 +51,10 @@ export class PropioOauthProvider implements IOathProvider {
             , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
             .toPromise();
     }
-
-    login(config: Config): Promise<any> {
+    logOut(){
+        
+    }
+    login(config: Config): Promise<OAuthProfile> {
         this.usuario = new authUsuario();
         this.usuario.IdUsuario = config.propio.email;
         this.usuario.Contrasenia = config.propio.contraseña;
@@ -60,11 +62,23 @@ export class PropioOauthProvider implements IOathProvider {
         this.usuario.Olvido = false;
         this.usuario.tokenNotificacion = Constantes.tokenNotificacion;
 
-        return this.validar().then(_ => {
-            if (_._body == "Success")
-                return Promise.resolve({ success: true });
+        return this.validar().then(_validar => {
+            if (_validar._body == "Success")
+                {
+                  
+                        let _perfil:OAuthProfile;
+                        _perfil.provider = config.source;
+                        _perfil.email = config.propio.email;
+                        _perfil.firstName = "";
+                        _perfil.lastName = "";
+                        _perfil.imgUrl = "";
+                
+                        return Promise.resolve(_perfil);
+    
+                  
+                }
             else
-                return Promise.resolve({ success: false, message: 'Usuario o contraseña incorrecta' });
+                return Promise.resolve(null);
         });
 
 
@@ -104,24 +118,24 @@ export class PropioOauthProvider implements IOathProvider {
             .toPromise();
     }
 
-    SetCredentials(codigoUsuario: number, password: string, callback) {
-        var authdata = Base64.encode(String(codigoUsuario) + ':' + password);
+    // SetCredentials(codigoUsuario: number, password: string, callback) {
+    //     var authdata = Base64.encode(String(codigoUsuario) + ':' + password);
 
 
-        //        this.usuario.Email = username;
+    //     //        this.usuario.Email = username;
 
-        //  Register(usuario, callback);//  No recuerdo cual era la necesidad de esta linea (Register).
+    //     //  Register(usuario, callback);//  No recuerdo cual era la necesidad de esta linea (Register).
 
-        this.globalData.setCodigoUsuario(codigoUsuario);
-        // this.globalData.setData(new Par("idUsuario", username));
-        // this.globalData.setData(new Par("authdata", authdata));
+    //     this.globalData.setCodigoUsuario(codigoUsuario);
+    //     // this.globalData.setData(new Par("idUsuario", username));
+    //     // this.globalData.setData(new Par("authdata", authdata));
 
-        //No se si se debe habilitar
-        //$http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
-        // window.localStorage.setItem("usuario", username);
+    //     //No se si se debe habilitar
+    //     //$http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
+    //     // window.localStorage.setItem("usuario", username);
 
-        callback();
-    }
+    //     callback();
+    // }
 
     ClearCredentials() {
         this.globalData.setCodigoUsuario(-1);

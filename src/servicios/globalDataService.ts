@@ -34,36 +34,10 @@ export class globalDataService {
  //   this._idGrupo = idGrupo;
     window.localStorage.setItem(this.getCodigoUsuario() + ":idGrupo",String(idGrupo));
   }
-  // dataChangeObserver: any;
-  // static dataPar: Array<Par> = new Array<Par>();
-  // dataChange: Observable<any>;
-
-  // constructor() {
-  //   this.dataPar = new Array<Par>();
-  //   // this.dataChange = new Observable((observer: Observer<any>) => {
-  //   //   this.dataChangeObserver = observer;
-  //   // });
-  // }
-
-  // public static setData(data: Par) {
-  //   let _data = this.dataPar.find(_ => _.Key == data.Key);
-  //   let index = this.dataPar.indexOf(_data);
-
-  //   if (index >= 0)
-  //     this.dataPar[index] = data;
-  //   else
-  //     this.dataPar.push(data);
-
-  //   // this.dataChangeObserver.next(this.dataPar);
-  // }
-
-  // public static getData(key: string) {
-  //   let _item = this.dataPar.find(_ => _.Key == key);
-  //   if (_item)
-  //     return _item.Valor;
-
-  //   return new String();
-  // }
+  public clear(){
+    this.setEmailUsuario("");
+    this.setCodigoUsuario(-1);
+  }
 }
 
 export class Par {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { IonicPage, NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
 import { InfoPalabra } from '../../modelo/InfoPalabra';
 import { InfoJugar } from '../../modelo/infoJugar';
@@ -19,8 +19,13 @@ import { BuscadorPage } from '../buscador/buscador';
   templateUrl: 'jugar.html',
 })
 
-export class JugarPage extends PageBase {
+export class JugarPage extends PageBase  {
 
+  // ionViewDidLoad(){
+  //   this._setFocusSignificado();
+  // }
+
+  @ViewChild('txtSignificado') txtSignificado;
   info: InfoJugar;
 
   public getInfo(): InfoJugar{
@@ -91,7 +96,7 @@ export class JugarPage extends PageBase {
   _siguiente() {
     this._inventario.Revelado = false;
     this.info.puedeEditar = false;
-
+    
     this._random();
 
     this._setFocusSignificado();
@@ -100,8 +105,14 @@ export class JugarPage extends PageBase {
   }
 
   _setFocusSignificado() {
+    let _ = this;
     setTimeout(function () {
-      document.getElementById('txtSignificado').focus();
+      if (_.txtSignificado)
+      {
+        _.txtSignificado.setFocus();
+      
+      }
+        
       if (this.keyboard)
         this.keyboard.show();
     }, 750);
@@ -200,7 +211,7 @@ export class JugarPage extends PageBase {
   }
 
   _validar() {
-
+    
     var _valor = this.info.SignificadoPalabra;
 
     this.palabraService.Nombre = this._getNombreActual();
@@ -223,6 +234,7 @@ export class JugarPage extends PageBase {
       else {
         this.mensaje("Alcanzó un " + _porcentajeAcierto + "% de acierto");
         this._setFocusSignificado();
+        this.info.SignificadoPalabra = '';
         this._mostrarIcono(2);
         this.vibrate(200);
       }

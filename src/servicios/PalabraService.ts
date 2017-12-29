@@ -46,20 +46,20 @@ export class PalabraService extends BaseService {
     }
 
     getAll(codigoUsuario: number, idGrupo: number): Promise<InfoPalabra[]> {
-        return this._palabra.getAll(codigoUsuario, idGrupo);
-        // return this._palabra.getAll(codigoUsuario, idGrupo).then(a => {
-        //     if (a.length == 0) {
-        //         return this.postAPI().map(_ => {
-        //             return _.map(i => {
-        //                 this.add(i);
-        //                 return i;
-        //             });
+ //       return this._palabra.getAll(codigoUsuario, idGrupo);
+        return this._palabra.getAll(codigoUsuario, idGrupo).then(a => {
+            if (a.length == 0) {
+                return this.postAPI().map(_ => {
+                    return _.map(i => {
+                        this.add(i);
+                        return i;
+                    });
 
-        //         }).toPromise<Array<InfoPalabra>>();
-        //     }
+                }).toPromise<Array<InfoPalabra>>();
+            }
 
-        //     return a;
-        // });
+            return a;
+        });
     }
 
     postAPI(): Observable<InfoPalabra[]> {

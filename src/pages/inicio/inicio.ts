@@ -37,6 +37,10 @@ export class InicioPage extends PageBase {
         this.Info = new InfoUsuario();
         
     }
+
+    ngOnInit(){
+        this.oauthService.logOut();
+    }
         login(source: string) {
             let _config:Config  = new Config();
             _config.propio.email = this.Info.Email;

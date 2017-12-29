@@ -71,7 +71,7 @@ export class PageBase {
         let toast = this.toastCtrl.create({
             message: texto,
             duration: 3000,
-            position:'top'
+            position:'bottom'
           });
           toast.present();
 

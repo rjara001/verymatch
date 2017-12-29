@@ -47,7 +47,7 @@
       <ion-icon item-end name="md-checkmark-circle" color="balanced" [hidden]="!info.mostrarValido"></ion-icon>
       <ion-icon item-end color="assertive" name="bug" [hidden]="!info.mostrarNoValido"></ion-icon>
 
-      <ion-input ng-keypress="_limpiar($event)" id="txtSignificado" type="text" [(ngModel)]="info.SignificadoPalabra"></ion-input>
+      <ion-input autofocus ng-keypress="_limpiar($event)" #txtSignificado type="text" [(ngModel)]="info.SignificadoPalabra"></ion-input>
       
 
       <!--<div class="mensaje assertive padding-right" ng-show="info.mostrarMensaje">{{info.mensaje}}</div>-->

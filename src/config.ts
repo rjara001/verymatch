@@ -11,8 +11,8 @@ export class Config {
 	}
 	
 	public google = {
-		apiUrl: "https://googleapis.com/oauth2/v3",
-		appId: "650188028899-okimlak9thv67icddebbskmi4da30vn1.apps.googleusercontent.com",
+		apiUrl: "https://googleapis.com/oauth2/v3/",
+		appId: "759430229541-uncdca7du2i6t88g01nkls53n3494pr8.apps.googleusercontent.com",
 		scope: ['email']
 	}
 

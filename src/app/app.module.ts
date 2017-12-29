@@ -36,6 +36,7 @@ import { configuracionData } from '../servicios/dataServicios/configuracionData'
 import { BaseDataService } from '../servicios/dataServicios/BaseDataService';
 import { palabraData } from '../servicios/dataServicios/palabraData';
 import { grupoData } from '../servicios/dataServicios/grupoData';
+import { GooglePlus } from '@ionic-native/google-plus';
 
 @NgModule({
 	declarations: [
@@ -87,6 +88,7 @@ import { grupoData } from '../servicios/dataServicios/grupoData';
 		BaseDataService,
 		palabraData,
 		grupoData,
+		GooglePlus,
 		{provide: ErrorHandler, useClass: IonicErrorHandler}
 	]
 })
