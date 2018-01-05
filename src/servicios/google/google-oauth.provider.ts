@@ -29,9 +29,9 @@ constructor(http: Http, config: Config, public googlePlus:GooglePlus) {
 login(config:Config): Promise<OAuthProfile> {
 	
 	return this.googlePlus.login({
-		//'scopes': config.google.scope, // optional, space-separated list of scopes, If not included or empty, defaults to `profile` and `email`.
-		'webClientId': config.google.appId//,
-		//'offline': true
+		'scopes': config.google.scope, // optional, space-separated list of scopes, If not included or empty, defaults to `profile` and `email`.
+		'webClientId': config.google.appId,
+		'offline': true
 	}).then(_=>{
 		let _perfil:OAuthProfile = new OAuthProfile();
 		_perfil.provider = config.source;

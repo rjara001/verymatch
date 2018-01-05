@@ -91,5 +91,11 @@
     <plugin name="cordova-plugin-insomnia" spec="^4.3.0" />
     <plugin name="cordova-plugin-tts" spec="^0.2.3" />
     <plugin name="cordova-plugin-speechrecognition" spec="^1.2.0" />
-    <plugin name="cordova-plugin-googleplus" spec="^4.0.2" />
+    <plugin name="cordova-plugin-facebook4" spec="^1.9.1">
+        <variable name="APP_ID" value="161872341248044" />
+        <variable name="APP_NAME" value="randus.aut.test" />
+    </plugin>
+    <plugin name="cordova-plugin-googleplus" spec="^5.1.1">
+        <variable name="REVERSED_CLIENT_ID" value="759430229541-uncdca7du2i6t88g01nkls53n3494pr8.apps.googleusercontent.com" />
+    </plugin>
 </widget>

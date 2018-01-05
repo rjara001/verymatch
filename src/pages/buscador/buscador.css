@@ -1,0 +1,25 @@
+page-buscador .table {
+  width: 100%;
+}
+
+page-buscador .table > thead > tr > th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #ddd;
+  font-size: 11px;
+}
+
+page-buscador .table > tbody > tr > td, page-buscador .table > tbody > tr > th, page-buscador .table > tfoot > tr > td, page-buscador .table > tfoot > tr > th, page-buscador .table > thead > tr > td, page-buscador .table > thead > tr > th {
+  padding: 8px;
+  line-height: 1.42857143;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+
+page-buscador th {
+  text-align: left;
+  font-weight: bold;
+}
+
+page-buscador td, page-buscador th {
+  padding: 0;
+}

@@ -10,6 +10,7 @@ import { globalDataService, Par } from '../servicios/globalDataService';
 import { ConfiguracionService } from '../servicios/ConfiguracionService';
 import { InicioPage } from '../pages/inicio/inicio';
 import { UsuarioPage } from '../pages/usuario/usuario';
+import { BuscadorPage } from '../pages/buscador/buscador';
 
 @Component({
 	templateUrl: 'app.html'
@@ -40,6 +41,7 @@ export class MyApp {
 		this.pages = [
 			{ title: 'Jugar', component: JugarPage , icon: 'md-game-controller-b'},
 			{ title: 'Asistente', component: AsistentePage, icon: 'md-microphone' },
+			{ title: 'Mi Diccionario', component: BuscadorPage, icon: 'md-filing' },
 			{ title: 'Panel de Control', component: PrincipalPage, icon: 'md-pulse' },
 			{ title: 'Configuracion', component: ConfiguracionPage, icon: 'md-build' },
 			{ title: 'Info Usuario', component: UsuarioPage, icon: 'md-body' }

@@ -66,7 +66,7 @@ export class PropioOauthProvider implements IOathProvider {
             if (_validar._body == "Success")
                 {
                   
-                        let _perfil:OAuthProfile;
+                        let _perfil:OAuthProfile = new OAuthProfile();
                         _perfil.provider = config.source;
                         _perfil.email = config.propio.email;
                         _perfil.firstName = "";

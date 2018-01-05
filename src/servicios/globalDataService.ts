@@ -3,6 +3,16 @@ export class globalDataService {
   //private static _email:string;
   private static _idGrupo:number = -1;
 
+  public getProvider(){
+    let _oauthstore = window.localStorage.getItem("oauthToken");
+    if (_oauthstore)
+    {
+      let _oauth = JSON.parse(window.localStorage.getItem("oauthToken"));
+      return _oauth.provider;
+    }
+    return "";
+  }
+
   public getCodigoUsuario():number{
     return Number(window.localStorage.getItem("usuario"));
     // this._codigoUsuario = Number(_usuario);

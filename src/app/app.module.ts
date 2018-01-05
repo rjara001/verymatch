@@ -37,6 +37,8 @@ import { BaseDataService } from '../servicios/dataServicios/BaseDataService';
 import { palabraData } from '../servicios/dataServicios/palabraData';
 import { grupoData } from '../servicios/dataServicios/grupoData';
 import { GooglePlus } from '@ionic-native/google-plus';
+import { Facebook } from '@ionic-native/facebook';
+import { BuscadorPage } from '../pages/buscador/buscador';
 
 @NgModule({
 	declarations: [
@@ -44,7 +46,7 @@ import { GooglePlus } from '@ionic-native/google-plus';
 		AsistentePage,
 		ConfiguracionPage,
 		PrincipalPage,
-		//RegistrarPage,
+		BuscadorPage,
 		UsuarioPage,
 		JugarPage
 	],
@@ -60,7 +62,7 @@ import { GooglePlus } from '@ionic-native/google-plus';
 		MyApp,
 		ConfiguracionPage,
 		PrincipalPage,
-		//RegistrarPage,
+		BuscadorPage,
 		UsuarioPage,
 		AsistentePage,
 		JugarPage,
@@ -89,6 +91,7 @@ import { GooglePlus } from '@ionic-native/google-plus';
 		palabraData,
 		grupoData,
 		GooglePlus,
+		Facebook,
 		{provide: ErrorHandler, useClass: IonicErrorHandler}
 	]
 })

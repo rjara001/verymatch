@@ -310,8 +310,7 @@ export class JugarPage extends PageBase  {
 
     if (this.info.puedeEditar)
       this.confirmar("Revisando significado..", _mensaje)
-        .then(function (res) {
-          if (res)
+        .then(()=> {
             this.navCtrl.setRoot(BuscadorPage, {}, { animate: true, direction: 'forward' });
         });
   }

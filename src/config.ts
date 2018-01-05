@@ -6,14 +6,14 @@ export class Config {
 
 	public facebook = {
 		apiUrl: "https://graph.facebook.com/v2.3",
-		appId: "1825134854185227",
-		scope: ['email']
+		appId: 161872341248044,
+		scope: ['public_profile','email']
 	}
 	
 	public google = {
 		apiUrl: "https://googleapis.com/oauth2/v3/",
 		appId: "759430229541-uncdca7du2i6t88g01nkls53n3494pr8.apps.googleusercontent.com",
-		scope: ['email']
+		scope: ''
 	}
 
 	public propio ={

@@ -5,6 +5,8 @@ import { globalDataService } from '../../servicios/globalDataService';
 import { ConfiguracionService } from '../../servicios/ConfiguracionService';
 import { Constantes } from '../../modelo/enums';
 import { InicioPage } from '../inicio/inicio';
+import { OAuthService } from '../../servicios/oauth.service';
+import { Config } from '../../config';
 
 /**
  * Generated class for the UsuarioPage page.
@@ -28,7 +30,8 @@ export class UsuarioPage extends PageBase{
     , public configuracion: ConfiguracionService
     , public alertCtrl: AlertController
     , public loadingCtrl: LoadingController
-    , public toastCtrl: ToastController) {
+    , public toastCtrl: ToastController
+    , public oauthService: OAuthService) {
     super(alertCtrl, loadingCtrl, toastCtrl, globalData)
   }
 
@@ -42,7 +45,10 @@ export class UsuarioPage extends PageBase{
   }
 
   cerrar(){
-
-    this.navCtrl.setRoot(InicioPage, {}, { animate: true, direction: 'forward' });
+    
+    this.oauthService.logOut().then(_=> {
+      this.navCtrl.setRoot(InicioPage, {}, { animate: true, direction: 'forward' });
+    });
+    
   }
 }

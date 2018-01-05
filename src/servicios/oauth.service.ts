@@ -16,11 +16,20 @@ export class OAuthService {
 	constructor(injector: Injector, public globalData: globalDataService, public servicioPropio: PropioOauthProvider) {
 		this.injector = injector;
 	}
-	
-	logOut(config: Config){
-		this.getOAuthService(config.source).logOut(config).then(_=>{
-			this.globalData.clear()
-		});
+
+	logOut(): Promise<void> {
+		let _config: Config = new Config();
+		_config.propio.email = this.globalData.getEmailUsuario();
+		_config.propio.contraseña = "";
+		_config.source = this.globalData.getProvider();
+
+		if (_config.source)
+			return this.getOAuthService(_config.source).logOut(_config).then(_ => {
+				this.globalData.clear()
+				return Promise.resolve();
+			});
+
+		return Promise.resolve();
 	}
 
 	login(config: Config): Promise<any> {

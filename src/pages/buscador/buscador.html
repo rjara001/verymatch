@@ -13,6 +13,54 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
+  <ion-list>
+    <ion-item>
+        
+      <ion-input [(ngModel)]="info.search" placeholder="buscar palabras" (input)="setFilteredItems()"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+              <button ion-button small full color="danger" (click)="google"> <ion-icon name="md-search"></ion-icon>&nbsp;Buscar google</button>
+          </ion-col>
+          <ion-col>
+              <button ion-button small full color="light" (click)="bing"> <ion-icon name="md-search"></ion-icon>&nbsp;Buscar bing</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      
+    </ion-item>
+    <ion-item>
 
+        Palabras encontradas
+    </ion-item>
+    <ion-item>
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Palabra</th>
+            <th>Signficado</th>
+            <th>Estado</th>
+            <th>Etapa</th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let info of info.palabras" (click)="cambiar(info)">
+              <td>
+                <ion-icon name="md-create"></ion-icon>
+              </td>
+              <td>{{info.Nombre}}</td>
+              <td>{{info.Significado}}</td>
+              <td>{{info.Estado}}</td>
+              <td>{{info.Etapa}}</td>
+            </tr>
+          </tbody>
+
+      </table>
+    </ion-item>
+
+  </ion-list>
 </ion-content>
