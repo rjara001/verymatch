@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, AlertController, Keyboard, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, Keyboard, ToastController, AlertController } from 'ionic-angular';
 import { PageBase } from '../../modelo/InfoBase';
 import { EstadoService } from '../../servicios/EstadoService';
 import { PalabraService } from '../../servicios/PalabraService';
@@ -16,6 +16,7 @@ import { SpeechRecognition } from '@ionic-native/speech-recognition';
 import { Observable } from 'rxjs/Observable';
 import { Constantes } from '../../modelo/enums';
 import { configuracionData } from '../../servicios/dataServicios/configuracionData';
+
 /**
  * Generated class for the AsistentePage page.
  *
@@ -202,7 +203,7 @@ export class AsistentePage extends PageBase {
       if (this._inventario.Item.Repeticiones < 3)
         this._setValor(this._inventario.Item, "Repeticiones", this._inventario.Item.Repeticiones + 1);
       else
-        this._setValor(this._inventario.Item, "EsConocido", 1);
+        this._setValor(this._inventario.Item, "EsConocido", true);
 
     }
     this._siguiente();
@@ -236,7 +237,7 @@ export class AsistentePage extends PageBase {
   }
 
   _random() {
-    var listadoPalabras = this.palabras.filter(_ => _.Repeticiones == this.info.resumen.NumeroRepeticionesActual);
+    var listadoPalabras = this.palabras.filter(_ => _.Repeticiones == this.info.resumen.NumeroRepeticionesActual && !_.EsConocido);
 
     if (listadoPalabras.length == 0) {
 
@@ -364,7 +365,7 @@ export class AsistentePage extends PageBase {
 
       if (_porcentajeAcierto == 100) {
         this.mensaje("Alcanzó un " + _porcentajeAcierto + "% de acierto");
-        this._setValor(this._inventario.Item, "EsConocido", 1);
+        this._setValor(this._inventario.Item, "EsConocido", true);
 
         this._siguiente();
 

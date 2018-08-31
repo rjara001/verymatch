@@ -25,16 +25,17 @@ export class authUsuario {
 @Injectable()
 export class PropioOauthProvider implements IOathProvider {
     usuario: authUsuario;
+    headers: Headers;
+    options: RequestOptions;
 
     constructor(public http: Http, public globalData: globalDataService) {
         this.usuario = new authUsuario();
-    }
 
-    /*  
-      this.Login = Login;
-      this.SetCredentials = SetCredentials;
-      this.ClearCredentials = ClearCredentials;
-      this.Register = Register;*/
+        this.headers = new Headers({
+            'Content-Type': 'application/x-www-form-urlencoded',
+        });
+        this.options = new RequestOptions({ headers: this.headers });
+    }
 
     getProfile(): Promise<any> {
         if (!Red.revisarConexionInternet())
@@ -51,8 +52,8 @@ export class PropioOauthProvider implements IOathProvider {
             , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
             .toPromise();
     }
-    logOut(){
-        
+    logOut() {
+
     }
     login(config: Config): Promise<OAuthProfile> {
         this.usuario = new authUsuario();
@@ -63,20 +64,19 @@ export class PropioOauthProvider implements IOathProvider {
         this.usuario.tokenNotificacion = Constantes.tokenNotificacion;
 
         return this.validar().then(_validar => {
-            if (_validar._body == "Success")
-                {
-                  
-                        let _perfil:OAuthProfile = new OAuthProfile();
-                        _perfil.provider = config.source;
-                        _perfil.email = config.propio.email;
-                        _perfil.firstName = "";
-                        _perfil.lastName = "";
-                        _perfil.imgUrl = "";
-                
-                        return Promise.resolve(_perfil);
-    
-                  
-                }
+            if (_validar._body == "Success") {
+
+                let _perfil: OAuthProfile = new OAuthProfile();
+                _perfil.provider = config.source;
+                _perfil.email = config.propio.email;
+                _perfil.firstName = "";
+                _perfil.lastName = "";
+                _perfil.imgUrl = "";
+
+                return Promise.resolve(_perfil);
+
+
+            }
             else
                 return Promise.resolve(null);
         });
@@ -93,11 +93,18 @@ export class PropioOauthProvider implements IOathProvider {
 
         _url = _url.replace("[HOST]", Constantes.url);
 
-        var _postData = JSON.stringify(this.usuario);
+        var _postData = 'IdUsuario='
+                        + this.usuario.IdUsuario 
+                        + '&contrasenia='
+                        + this.usuario.Contrasenia 
+                        + '&idapporigen='
+                        + this.usuario.idapporigen
+                        + '&olvido=false&tokenNotificacion=' 
+                        + this.usuario.tokenNotificacion;
 
         return this.http.post(_url
             , _postData
-            , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+            , this.options)
             .toPromise();
 
     }
@@ -110,32 +117,22 @@ export class PropioOauthProvider implements IOathProvider {
 
         var _url = "[HOST]api/usuariowrapper/registrar".replace("[HOST]", Constantes.url);
 
-        var _postData = JSON.stringify(this.usuario);
+        var _postData = 'IdUsuario='
+                        + this.usuario.IdUsuario 
+                        + '&contrasenia='
+                        + this.usuario.Contrasenia 
+                        + '&idapporigen='
+                        + this.usuario.idapporigen
+                        + '&olvido=false&tokenNotificacion=' 
+                        + this.usuario.tokenNotificacion;
+
+       // var _postData = JSON.stringify(this.usuario);
 
         return this.http.post(_url
             , _postData
-            , new RequestOptions({ headers: new Headers({ 'Content-Type': 'application/json' }) }))
+            , this.options)
             .toPromise();
     }
-
-    // SetCredentials(codigoUsuario: number, password: string, callback) {
-    //     var authdata = Base64.encode(String(codigoUsuario) + ':' + password);
-
-
-    //     //        this.usuario.Email = username;
-
-    //     //  Register(usuario, callback);//  No recuerdo cual era la necesidad de esta linea (Register).
-
-    //     this.globalData.setCodigoUsuario(codigoUsuario);
-    //     // this.globalData.setData(new Par("idUsuario", username));
-    //     // this.globalData.setData(new Par("authdata", authdata));
-
-    //     //No se si se debe habilitar
-    //     //$http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
-    //     // window.localStorage.setItem("usuario", username);
-
-    //     callback();
-    // }
 
     ClearCredentials() {
         this.globalData.setCodigoUsuario(-1);

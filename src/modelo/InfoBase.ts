@@ -1,6 +1,7 @@
 import { InfoGrupo } from '../modelo/InfoGrupo';
-import { InfoPalabra } from '../modelo/InfoPalabra';
+
 import { LoadingController, Loading, AlertController } from 'ionic-angular';
+
 import { globalDataService } from '../servicios/globalDataService';
 import { ToastController } from 'ionic-angular';
 

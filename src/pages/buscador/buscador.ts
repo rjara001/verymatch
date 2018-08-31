@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, LoadingController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
 import { PalabraService } from '../../servicios/PalabraService';
 import { PageBase } from '../../modelo/InfoBase';
 import { globalDataService } from '../../servicios/globalDataService';
@@ -40,7 +40,8 @@ export class BuscadorPage extends PageBase {
 
   _reiniciar(){
     this.info.palabras = this.servicio.Items;
-    this.info.search = this.servicio._info.Nombre;
+    if (this.servicio._info)
+      this.info.search = this.servicio._info.Nombre;
   }
   setFilteredItems() {
     this.show();

@@ -38,7 +38,7 @@ import { palabraData } from '../servicios/dataServicios/palabraData';
 import { grupoData } from '../servicios/dataServicios/grupoData';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook } from '@ionic-native/facebook';
-import { BuscadorPage } from '../pages/buscador/buscador';
+//import { BuscadorPage } from '../pages/buscador/buscador';
 
 @NgModule({
 	declarations: [
@@ -46,7 +46,7 @@ import { BuscadorPage } from '../pages/buscador/buscador';
 		AsistentePage,
 		ConfiguracionPage,
 		PrincipalPage,
-		BuscadorPage,
+		//BuscadorPage,
 		UsuarioPage,
 		JugarPage
 	],
@@ -62,7 +62,7 @@ import { BuscadorPage } from '../pages/buscador/buscador';
 		MyApp,
 		ConfiguracionPage,
 		PrincipalPage,
-		BuscadorPage,
+		//BuscadorPage,
 		UsuarioPage,
 		AsistentePage,
 		JugarPage,

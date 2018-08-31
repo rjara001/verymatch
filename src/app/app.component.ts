@@ -35,7 +35,7 @@ export class MyApp {
 		this.platform = platform;
 		this.initializeApp();
 
-		this.initializeApp();
+		//this.initializeApp();
 
 		// set our app's pages
 		this.pages = [

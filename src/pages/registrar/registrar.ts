@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, LoadingController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import emailMask from 'text-mask-addons/dist/emailMask';
 import { PasswordValidator } from '../validations/PasswordValidator';
@@ -24,33 +24,43 @@ export class RegistrarPage extends PageBase {
   registerForm: FormGroup;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController
-    , public loadingCtrl: LoadingController , public toastCtrl: ToastController
-    , public globalData: globalDataService 
+    , public loadingCtrl: LoadingController, public toastCtrl: ToastController
+    , public globalData: globalDataService
     , public oauthService: OAuthService) {
-    super(alertCtrl, loadingCtrl,toastCtrl, globalData);
+    super(alertCtrl, loadingCtrl, toastCtrl, globalData);
   }
 
   ngOnInit() {
     this.registerForm = new FormGroup({
-      email: new FormControl('', [Validators.required,Validators.email])
-  });
+      email: new FormControl('', [Validators.required, Validators.email])
+    });
   }
 
-  registrar(){
+  registrar() {
     this.show();
-    
-      this.oauthService.Register(this.registerForm.get("email").value).then(_=>{
-        if (_._body=='UsuarioCreado')
+
+    this.oauthService.Register(this.registerForm.get("email").value)
+      .then(_ => {
+        if (_._body == 'UsuarioCreado')
           this.alerta('Registrando usuario..', 'Tu registro se realizó correctamente, ahora debes revisar tu correo y seguir las instrucciones para terminar el proceso de registro.');
-      else
+        else
           this.mensaje(_);
 
-          this.hide();
+        this.hide();
+      })
+      .catch(_ => {
+        if (_._body == 'Usuario ya existe!')
+          this.alerta('Registrando usuario..', 'Este usuario ya se encuentra registrado, por favor intenta con otro.');
+        else
+          this.mensaje(_);
+
       });
+
+    this.hide();
   }
-  
-ionViewDidLoad() {
-    
+
+  ionViewDidLoad() {
+
   }
-  
+
 }

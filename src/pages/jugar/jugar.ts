@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
 import { InfoPalabra } from '../../modelo/InfoPalabra';
 import { InfoJugar } from '../../modelo/infoJugar';
 import { InfoBase, PageBase } from '../../modelo/InfoBase';
@@ -7,7 +7,6 @@ import { ConfiguracionService } from '../../servicios/ConfiguracionService';
 import { globalDataService } from '../../servicios/globalDataService';
 import { Constantes } from '../../modelo/enums';
 import { PalabraService } from '../../servicios/PalabraService';
-import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { EstadoService } from '../../servicios/EstadoService';
 import { Keyboard } from 'ionic-angular/platform/keyboard';
 import { Vibration } from '@ionic-native/vibration';
@@ -120,7 +119,7 @@ export class JugarPage extends PageBase  {
   }
 
   _random() {
-    var listadoPalabras = this.palabras.filter(_ => _.Repeticiones == this.info.resumen.NumeroRepeticionesActual);
+    var listadoPalabras = this.palabras.filter(_ => _.Repeticiones == this.info.resumen.NumeroRepeticionesActual && !_.EsConocido);
 
     if (listadoPalabras.length == 0) {
 
@@ -224,7 +223,7 @@ export class JugarPage extends PageBase  {
 
       if (_porcentajeAcierto == 100) {
         this.mensaje("Alcanzó un " + _porcentajeAcierto + "% de acierto");
-        this._setValor(this._inventario.Item, "EsConocido", 1);
+        this._setValor(this._inventario.Item, "EsConocido", true);
 
         this._siguiente();
 
@@ -295,7 +294,7 @@ export class JugarPage extends PageBase  {
       if (this._inventario.Item.Repeticiones < 3)
         this._setValor(this._inventario.Item, "Repeticiones", this._inventario.Item.Repeticiones + 1);
       else
-        this._setValor(this._inventario.Item, "EsConocido", 1);
+        this._setValor(this._inventario.Item, "EsConocido", true);
 
     }
 

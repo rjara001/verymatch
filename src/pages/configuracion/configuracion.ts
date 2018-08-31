@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, AlertController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
 import { globalDataService, Par } from '../../servicios/globalDataService';
 import { ConfiguracionService } from '../../servicios/ConfiguracionService';
 import { PageBase } from '../../modelo/InfoBase';
-import { Constantes } from '../../modelo/enums';
-
 /**
  * Generated class for the ConfiguracionPage page.
  *

@@ -1,5 +1,5 @@
 import { Component, NgZone, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, LoadingController, Platform, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, Platform, ToastController, AlertController } from 'ionic-angular';
 import { InfoBase, PageBase } from '../../modelo/InfoBase';
 import { globalDataService, Par } from '../../servicios/globalDataService';
 import { Constantes } from '../../modelo/enums';
